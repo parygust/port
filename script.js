@@ -259,21 +259,42 @@ document.querySelectorAll('.win').forEach(initWin);
 ['about', 'projects'].forEach(id => bringFront(id));
 
 /* ══════════════════════════════════════════════════════════
-   DESKTOP ICON DRAG  (free-position + localStorage)
+   DESKTOP ICON GRID + DRAG  (snap-to-grid, no persistence)
 ══════════════════════════════════════════════════════════ */
+const GRID_W  = 152;   // icon width
+const GRID_H  = 172;   // icon height
+const GRID_OX = 14;    // left margin
+const GRID_OY = 14;    // top margin
+
+function snapToGrid(px, py) {
+  const col = Math.max(0, Math.round((px - GRID_OX) / GRID_W));
+  const row = Math.max(0, Math.round((py - GRID_OY) / GRID_H));
+  return { x: GRID_OX + col * GRID_W, y: GRID_OY + row * GRID_H };
+}
+
+// Rightmost grid column that fits fully within the viewport
+const rightColX = GRID_OX + Math.floor((window.innerWidth - GRID_OX - GRID_W) / GRID_W) * GRID_W;
+
+const ICON_INIT = {
+  about:    { x: GRID_OX,          y: GRID_OY             },
+  social:   { x: GRID_OX,          y: GRID_OY + GRID_H    },
+  resume:   { x: GRID_OX,          y: GRID_OY + GRID_H * 2},
+  contact:  { x: GRID_OX + GRID_W, y: GRID_OY             },
+  projects: { x: GRID_OX + GRID_W, y: GRID_OY + GRID_H    },
+  linkedin: { x: rightColX,        y: GRID_OY             },
+  itch:     { x: rightColX,        y: GRID_OY + GRID_H    },
+  github:   { x: rightColX,        y: GRID_OY + GRID_H * 2},
+};
+
 function initIconDrag(el) {
   const id = el.dataset.iconId;
   let moved = false;
 
-  // Restore saved position from a previous session
-  try {
-    const saved = JSON.parse(localStorage.getItem('icon-pos') || '{}')[id];
-    if (saved) {
-      gsap.set(el, { x: saved.x, y: saved.y });
-      el.setAttribute('data-x', saved.x);
-      el.setAttribute('data-y', saved.y);
-    }
-  } catch (_) {}
+  // Place at initial grid position
+  const init = ICON_INIT[id] || { x: GRID_OX, y: GRID_OY };
+  gsap.set(el, { x: init.x, y: init.y });
+  el.setAttribute('data-x', init.x);
+  el.setAttribute('data-y', init.y);
 
   interact(el).draggable({
     listeners: {
@@ -291,15 +312,12 @@ function initIconDrag(el) {
       },
       end() {
         el.style.zIndex = '';
-        if (!id) return;
-        try {
-          const all = JSON.parse(localStorage.getItem('icon-pos') || '{}');
-          all[id] = {
-            x: parseFloat(el.getAttribute('data-x')) || 0,
-            y: parseFloat(el.getAttribute('data-y')) || 0
-          };
-          localStorage.setItem('icon-pos', JSON.stringify(all));
-        } catch (_) {}
+        const x = parseFloat(el.getAttribute('data-x')) || 0;
+        const y = parseFloat(el.getAttribute('data-y')) || 0;
+        const snapped = snapToGrid(x, y);
+        gsap.to(el, { x: snapped.x, y: snapped.y, duration: 0.15, ease: 'power2.out' });
+        el.setAttribute('data-x', snapped.x);
+        el.setAttribute('data-y', snapped.y);
       }
     }
   });

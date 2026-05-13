@@ -83,6 +83,7 @@ body {
 }
 .icon {
   position: absolute;
+  top: 0; left: 0;
   pointer-events: all;
   display: flex; flex-direction: column; align-items: center;
   justify-content: flex-start;

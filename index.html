@@ -51,44 +51,47 @@
   <!-- ── Icons ──────────────────────────────────────────── -->
   <div id="icons">
 
-    <div class="icon" data-icon-id="about"    style="top:14px;left:14px;"   tabindex="0" onclick="openWindow('about')">
+    <!-- Left column: About, Social Hub, Resume -->
+    <div class="icon" data-icon-id="about"    tabindex="0" onclick="openWindow('about')">
       <div class="icon-img"><img src="me.png" style="width:128px;height:128px;object-fit:cover;border-radius:4px;" /></div>
       <span class="icon-label" data-scramble>About.exe</span>
     </div>
 
-    <div class="icon" data-icon-id="projects" style="top:186px;left:14px;"  tabindex="0" onclick="openWindow('projects')">
-      <div class="icon-img">📁</div>
-      <span class="icon-label" data-scramble>Projects</span>
-    </div>
-
-    <div class="icon" data-icon-id="social"   style="top:358px;left:14px;"  tabindex="0" onclick="openWindow('social')">
+    <div class="icon" data-icon-id="social"   tabindex="0" onclick="openWindow('social')">
       <div class="icon-img">🌐</div>
       <span class="icon-label" data-scramble>Social Hub</span>
     </div>
 
-    <div class="icon" data-icon-id="resume"   style="top:530px;left:14px;"  tabindex="0" onclick="openWindow('resume')">
+    <div class="icon" data-icon-id="resume"   tabindex="0" onclick="openWindow('resume')">
       <div class="icon-img">📄</div>
       <span class="icon-label" data-scramble>Resume.pdf</span>
     </div>
 
-    <div class="icon" data-icon-id="contact"  style="top:14px;left:166px;"  tabindex="0" onclick="openWindow('contact')">
+    <!-- Middle column: Contact, Projects -->
+    <div class="icon" data-icon-id="contact"  tabindex="0" onclick="openWindow('contact')">
       <div class="icon-img">✉️</div>
       <span class="icon-label" data-scramble>Contact</span>
     </div>
 
-    <div class="icon" data-icon-id="github"   style="top:186px;left:166px;" tabindex="0" onclick="openLink('https://github.com/parygust')">
-      <div class="icon-img">🐙</div>
-      <span class="icon-label" data-scramble>GitHub</span>
+    <div class="icon" data-icon-id="projects" tabindex="0" onclick="openWindow('projects')">
+      <div class="icon-img">📁</div>
+      <span class="icon-label" data-scramble>Projects</span>
     </div>
 
-    <div class="icon" data-icon-id="linkedin" style="top:358px;left:166px;" tabindex="0" onclick="openLink('https://www.linkedin.com/in/enes-ba%C5%9F-0955a7237/')">
+    <!-- Right column: LinkedIn, itch.io, GitHub (positioned by JS at screen-right) -->
+    <div class="icon" data-icon-id="linkedin" tabindex="0" onclick="openLink('https://www.linkedin.com/in/enes-ba%C5%9F-0955a7237/')">
       <div class="icon-img">💼</div>
       <span class="icon-label" data-scramble>LinkedIn</span>
     </div>
 
-    <div class="icon" data-icon-id="itch"     style="top:530px;left:166px;" tabindex="0" onclick="openLink('https://parygust.itch.io')">
+    <div class="icon" data-icon-id="itch"     tabindex="0" onclick="openLink('https://parygust.itch.io')">
       <div class="icon-img">🎮</div>
       <span class="icon-label" data-scramble>itch.io</span>
+    </div>
+
+    <div class="icon" data-icon-id="github"   tabindex="0" onclick="openLink('https://github.com/parygust')">
+      <div class="icon-img">🐙</div>
+      <span class="icon-label" data-scramble>GitHub</span>
     </div>
 
   </div><!-- /icons -->
