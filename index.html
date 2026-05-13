@@ -153,41 +153,8 @@
     </div>
     <div class="win-content">
       <div class="win-body" style="min-width:300px;">
-        <div class="proj-card">
-          <h3 data-scramble>Brain Tumor Detector AI</h3>
-          <p>Developed a deep learning model for the automated detection and classification of brain tumors from MRI scans using
-Convolutional Neural Networks (CNN) with a focus on medical imaging accuracy.</p>
-          <span class="proj-tag">Python</span><span class="proj-tag">AI</span><span class="proj-tag">NLP</span>
-        </div>
-        <div class="proj-card">
-          <h3 data-scramble>AI Bank Assistant</h3>
-          <p>Intelligent banking chatbot with natural language understanding and account query capabilities.</p>
-          <span class="proj-tag">Python</span><span class="proj-tag">AI</span><span class="proj-tag">NLP</span>
-        </div>
-        <div class="proj-card">
-          <h3 data-scramble>VoiceAssistant</h3>
-          <p>Voice assistant powered by Gemma LLM with Whisper speech-to-text transcription pipeline.</p>
-          <span class="proj-tag">Python</span><span class="proj-tag">Gemma</span><span class="proj-tag">Whisper</span><span class="proj-tag">TTS</span>
-        </div>
-        <div class="proj-card">
-          <h3 data-scramble>ASL Language App</h3>
-          <p>American Sign Language recognition application using computer vision and machine learning.</p>
-          <span class="proj-tag">Python</span><span class="proj-tag">CV</span><span class="proj-tag">ML</span>
-        </div>
-        <div class="proj-card">
-          <h3 data-scramble>socks_game</h3>
-          <p>A browser-based game built with custom physics &amp; pixel art.</p>
-          <span class="proj-tag">JavaScript</span><span class="proj-tag">Canvas</span>
-        </div>
-        <div class="proj-card">
-          <h3 data-scramble>Fall_lootgamejam</h3>
-          <p>Game jam entry — loot-driven fall season themed platformer.</p>
-          <span class="proj-tag">Unity</span><span class="proj-tag">C#</span><span class="proj-tag">Game Jam</span>
-        </div>
-        <div class="proj-card">
-          <h3 data-scramble>portfolio</h3>
-          <p>This portfolio — Windows 95 OS aesthetic with GSAP animations.</p>
-          <span class="proj-tag">HTML</span><span class="proj-tag">GSAP</span><span class="proj-tag">CSS</span>
+        <div id="projects-list">
+          <p style="font-size:12px;color:#666;">Loading projects…</p>
         </div>
       </div>
     </div>
@@ -211,12 +178,13 @@ Convolutional Neural Networks (CNN) with a focus on medical imaging accuracy.</p
     <div class="win-content">
       <div class="win-body" style="min-width:280px;">
         <label class="r-label">Name:</label>
-        <input class="r-input" type="text" placeholder="Your Name" />
+        <input id="contact-name" class="r-input" type="text" placeholder="Your Name" />
         <label class="r-label">Email:</label>
-        <input class="r-input" type="email" placeholder="you@example.com" />
+        <input id="contact-email" class="r-input" type="email" placeholder="you@example.com" />
         <label class="r-label">Message:</label>
-        <textarea class="r-input" rows="4" placeholder="Say hello…"></textarea>
-        <button class="r-btn" data-scramble>✉ Send Message</button>
+        <textarea id="contact-msg" class="r-input" rows="4" placeholder="Say hello…"></textarea>
+        <div id="contact-feedback" style="font-size:11px;margin-bottom:8px;"></div>
+        <button class="r-btn" onclick="sendContact()" data-scramble>✉ Send Message</button>
       </div>
     </div>
   </div>

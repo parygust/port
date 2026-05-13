@@ -515,6 +515,96 @@ document.addEventListener('mousedown', e => {
 /* ══════════════════════════════════════════════════════════
    MODULAR WINDOW FACTORY
 ══════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════
+   PROJECTS — load dynamically from projects.php
+══════════════════════════════════════════════════════════ */
+function renderProjects(projects) {
+  const list = $('projects-list');
+  if (!list) return;
+  list.innerHTML = '';
+  projects.forEach(p => {
+    const tags = p.tags.split(',').map(t =>
+      `<span class="proj-tag">${t.trim()}</span>`
+    ).join('');
+    const card = document.createElement('div');
+    card.className = 'proj-card';
+    card.innerHTML = `<h3 data-scramble>${p.title}</h3><p>${p.description}</p>${tags}`;
+    list.appendChild(card);
+  });
+  bindScramble(list);
+}
+
+fetch('projects.php')
+  .then(r => r.json())
+  .then(data => { if (Array.isArray(data)) renderProjects(data); })
+  .catch(() => {}); // silently keep the fallback content if server not ready
+
+/* ══════════════════════════════════════════════════════════
+   CONTACT FORM — validation + AJAX submit
+══════════════════════════════════════════════════════════ */
+function sendContact() {
+  const name    = $('contact-name');
+  const email   = $('contact-email');
+  const msg     = $('contact-msg');
+  const feedback = $('contact-feedback');
+
+  // Clear previous feedback
+  feedback.style.color = '#c00';
+  feedback.textContent = '';
+
+  // Validation
+  if (name.value.trim() === '') {
+    feedback.textContent = '⚠ Name is required.';
+    name.focus();
+    return;
+  }
+  if (email.value.trim() === '') {
+    feedback.textContent = '⚠ Email is required.';
+    email.focus();
+    return;
+  }
+  // Basic email format check
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+    feedback.textContent = '⚠ Please enter a valid email address.';
+    email.focus();
+    return;
+  }
+  if (msg.value.trim() === '') {
+    feedback.textContent = '⚠ Message cannot be empty.';
+    msg.focus();
+    return;
+  }
+
+  // All valid — send to server
+  feedback.style.color = '#555';
+  feedback.textContent = 'Sending…';
+
+  fetch('contact.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name:    name.value.trim(),
+      email:   email.value.trim(),
+      message: msg.value.trim()
+    })
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        feedback.style.color = '#007700';
+        feedback.textContent = '✔ Message sent! I\'ll get back to you soon.';
+        name.value = ''; email.value = ''; msg.value = '';
+      } else {
+        feedback.style.color = '#c00';
+        feedback.textContent = '✘ Error: ' + (data.error || 'Could not send message.');
+      }
+    })
+    .catch(() => {
+      feedback.style.color = '#c00';
+      feedback.textContent = '✘ Could not reach the server.';
+    });
+}
+
 function addWindow({ id, title, icon = '🗂', label, content = '', top = 120, left = 280 }) {
   const ic = document.createElement('div');
   ic.className = 'icon'; ic.tabIndex = 0;
