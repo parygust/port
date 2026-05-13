@@ -14,12 +14,48 @@ tick();
 setInterval(tick, 1000);
 
 /* ══════════════════════════════════════════════════════════
-   PRELOADER
+   PRELOADER  — orbiting text + counter + curtain reveal
 ══════════════════════════════════════════════════════════ */
 (function runPreloader() {
-  const el = $('counter');
+  const counterEl = $('counter');
   let cur = 0, done = false;
 
+  /* ── Size SVG to exact viewport so coordinates match ── */
+  const svgEl = $('orbit-svg');
+  svgEl.setAttribute('width',   window.innerWidth);
+  svgEl.setAttribute('height',  window.innerHeight);
+  svgEl.setAttribute('viewBox', `0 0 ${window.innerWidth} ${window.innerHeight}`);
+
+  /* ── Build circular SVG path centred on screen ── */
+  const cx = window.innerWidth  / 2;
+  const cy = window.innerHeight / 2;
+  const r  = Math.min(window.innerWidth, window.innerHeight) * 0.30;
+
+  $('orbit-path').setAttribute('d',
+    `M ${cx - r},${cy} A ${r},${r} 0 1,1 ${cx + r},${cy} A ${r},${r} 0 1,1 ${cx - r},${cy}`
+  );
+
+  /* ── Animation A: slow continuous rotation ── */
+  const spinAnim = gsap.to('#orbit-spin', {
+    rotation: 360,
+    duration: 16,
+    ease: 'none',
+    repeat: -1,
+    svgOrigin: `${cx} ${cy}`
+  });
+
+  /* ── Animation B: 2-second loading heartbeat ── */
+  const pulseAnim = gsap.to('#orbit-pulse', {
+    scale: 1.06,
+    opacity: 0.55,
+    duration: 1,
+    ease: 'sine.inOut',
+    yoyo: true,
+    repeat: -1,
+    svgOrigin: `${cx} ${cy}`
+  });
+
+  /* ── Counter animation helper ── */
   function animTo(target, cb) {
     gsap.to({ v: cur }, {
       v: target,
@@ -27,21 +63,48 @@ setInterval(tick, 1000);
       ease: 'power1.inOut',
       onUpdate() {
         cur = Math.round(this.targets()[0].v);
-        el.textContent = String(cur).padStart(2, '0');
+        counterEl.textContent = String(cur).padStart(2, '0');
       },
       onComplete: cb
     });
   }
 
+  /* ── Reveal sequence (called once page + counter are ready) ── */
+  function reveal() {
+    spinAnim.kill();
+    pulseAnim.kill();
+
+    /* Orbiting ring: expand outward and fade */
+    gsap.to('#orbit-spin', {
+      scale: 3,
+      opacity: 0,
+      duration: 0.9,
+      ease: 'power2.in',
+      svgOrigin: `${cx} ${cy}`
+    });
+
+    /* Counter fade */
+    gsap.to(counterEl, {
+      opacity: 0,
+      duration: 0.4,
+      ease: 'power2.in'
+    });
+
+    /* Curtain slides up after a short beat */
+    gsap.to($('preloader'), {
+      yPercent: -100,
+      duration: 1.2,
+      ease: 'expo.inOut',
+      delay: 0.55,
+      onComplete: () => $('preloader').remove()
+    });
+  }
+
+  /* ── Drive the counter to 70 (pause), then wait for load ── */
   animTo(70, () => {
     function finish() {
       if (done) return; done = true;
-      animTo(100, () => {
-        gsap.to($('preloader'), {
-          yPercent: -100, duration: 1.2, ease: 'expo.inOut',
-          onComplete: () => $('preloader').remove()
-        });
-      });
+      animTo(100, reveal);
     }
     if (document.readyState === 'complete') finish();
     else window.addEventListener('load', finish, { once: true });
@@ -194,6 +257,60 @@ function initWin(el) {
 
 document.querySelectorAll('.win').forEach(initWin);
 ['about', 'projects'].forEach(id => bringFront(id));
+
+/* ══════════════════════════════════════════════════════════
+   DESKTOP ICON DRAG  (free-position + localStorage)
+══════════════════════════════════════════════════════════ */
+function initIconDrag(el) {
+  const id = el.dataset.iconId;
+  let moved = false;
+
+  // Restore saved position from a previous session
+  try {
+    const saved = JSON.parse(localStorage.getItem('icon-pos') || '{}')[id];
+    if (saved) {
+      gsap.set(el, { x: saved.x, y: saved.y });
+      el.setAttribute('data-x', saved.x);
+      el.setAttribute('data-y', saved.y);
+    }
+  } catch (_) {}
+
+  interact(el).draggable({
+    listeners: {
+      start() {
+        moved = false;
+        el.style.zIndex = 5;
+      },
+      move(e) {
+        moved = true;
+        const x = (parseFloat(el.getAttribute('data-x')) || 0) + e.dx;
+        const y = (parseFloat(el.getAttribute('data-y')) || 0) + e.dy;
+        gsap.set(el, { x, y });
+        el.setAttribute('data-x', x);
+        el.setAttribute('data-y', y);
+      },
+      end() {
+        el.style.zIndex = '';
+        if (!id) return;
+        try {
+          const all = JSON.parse(localStorage.getItem('icon-pos') || '{}');
+          all[id] = {
+            x: parseFloat(el.getAttribute('data-x')) || 0,
+            y: parseFloat(el.getAttribute('data-y')) || 0
+          };
+          localStorage.setItem('icon-pos', JSON.stringify(all));
+        } catch (_) {}
+      }
+    }
+  });
+
+  // Suppress the onclick if the icon was actually dragged
+  el.addEventListener('click', e => {
+    if (moved) { e.stopImmediatePropagation(); moved = false; }
+  }, true);
+}
+
+document.querySelectorAll('.icon[data-icon-id]').forEach(initIconDrag);
 
 /* ══════════════════════════════════════════════════════════
    PDF.js VIEWER
