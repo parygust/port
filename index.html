@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio — Retro OS</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <!-- interact.js -->
+  <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+
+  <style>
+    /* ── Base ─────────────────────────────────────────────── */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { overflow: hidden; background: #008080; font-family: 'Courier New', monospace; }
+
+    /* ── Preloader ────────────────────────────────────────── */
+    #preloader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: #fff; display: flex;
+      align-items: center; justify-content: center;
+    }
+    #counter {
+      font-size: clamp(4rem, 12vw, 9rem);
+      font-weight: 900; color: #000;
+      letter-spacing: -0.04em; line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ── Desktop ──────────────────────────────────────────── */
+    #desktop {
+      width: 100vw; height: 100vh; position: relative;
+      background:
+        repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(0,0,0,.08) 39px, rgba(0,0,0,.08) 40px),
+        repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(0,0,0,.08) 39px, rgba(0,0,0,.08) 40px),
+        #008080;
+    }
+
+    /* ── Window ───────────────────────────────────────────── */
+    .win {
+      position: absolute;
+      min-width: 320px;
+      background: #c0c0c0;
+      border: 2px solid #fff;
+      border-right-color: #000; border-bottom-color: #000;
+      box-shadow: 2px 2px 0 #868686, inset 1px 1px 0 #dfdfdf;
+      user-select: none;
+    }
+    .win.active { z-index: 100; }
+
+    .title-bar {
+      display: flex; align-items: center; gap: 4px;
+      padding: 3px 4px;
+      background: linear-gradient(90deg, #000080, #1084d0);
+      color: #fff; font-size: 12px; font-weight: bold;
+      cursor: move;
+    }
+    .title-bar .title-text { flex: 1; pointer-events: none; }
+
+    .win-btn {
+      width: 16px; height: 14px; flex-shrink: 0;
+      background: #c0c0c0;
+      border: 1px solid #fff;
+      border-right-color: #000; border-bottom-color: #000;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; font-weight: bold; color: #000;
+      cursor: pointer; line-height: 1;
+    }
+    .win-btn:hover { background: #dfdfdf; }
+
+    .win-body {
+      padding: 14px 16px;
+      font-size: 13px; color: #000;
+      line-height: 1.7;
+    }
+
+    .menu-bar {
+      background: #c0c0c0;
+      border-bottom: 1px solid #868686;
+      padding: 2px 8px;
+      font-size: 12px; display: flex; gap: 12px;
+    }
+    .menu-bar span {
+      cursor: pointer; padding: 1px 4px;
+      text-decoration: underline;
+    }
+    .menu-bar span:hover { background: #000080; color: #fff; }
+
+    /* ── Taskbar ──────────────────────────────────────────── */
+    #taskbar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: 36px; background: #c0c0c0;
+      border-top: 2px solid #fff;
+      display: flex; align-items: center; gap: 4px; padding: 0 4px;
+      z-index: 9000;
+    }
+    #start-btn {
+      display: flex; align-items: center; gap: 5px;
+      padding: 2px 8px; height: 26px;
+      background: #c0c0c0;
+      border: 2px solid #fff;
+      border-right-color: #000; border-bottom-color: #000;
+      font-size: 12px; font-weight: bold; cursor: pointer;
+    }
+    #start-btn:hover { background: #dfdfdf; }
+    .clock {
+      margin-left: auto; padding: 2px 8px;
+      border: 1px solid #868686; border-top-color: transparent; border-left-color: transparent;
+      font-size: 11px;
+    }
+
+    /* ── Desktop Icons ────────────────────────────────────── */
+    .icon {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 4px; padding: 8px; width: 72px;
+      cursor: pointer; color: #fff;
+      font-size: 11px; text-align: center;
+    }
+    .icon:hover .icon-img { outline: 1px dashed #fff; }
+    .icon-img {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+    }
+    #icons { position: absolute; top: 12px; left: 12px; display: flex; flex-direction: column; gap: 4px; }
+
+    /* ── Scramble ─────────────────────────────────────────── */
+    [data-scramble] { cursor: pointer; display: inline-block; }
+
+    /* ── Project cards ────────────────────────────────────── */
+    .proj-card {
+      background: #fff;
+      border: 1px solid #868686;
+      border-right-color: #000; border-bottom-color: #000;
+      padding: 8px 10px; margin-bottom: 8px;
+    }
+    .proj-card h3 { font-weight: bold; font-size: 13px; }
+    .proj-card p  { font-size: 11px; color: #555; margin-top: 2px; }
+
+    /* ── Input fields ─────────────────────────────────────── */
+    .retro-input {
+      width: 100%;
+      background: #fff;
+      border: 1px solid #000;
+      border-top-color: #868686; border-left-color: #868686;
+      padding: 4px 6px; font-size: 12px; font-family: inherit;
+      outline: none; margin-bottom: 8px;
+    }
+    .retro-btn {
+      padding: 4px 16px;
+      background: #c0c0c0;
+      border: 2px solid #fff;
+      border-right-color: #000; border-bottom-color: #000;
+      font-size: 12px; font-family: inherit; cursor: pointer;
+    }
+    .retro-btn:hover { background: #dfdfdf; }
+    .retro-btn:active { border-color: #000; border-right-color: #fff; border-bottom-color: #fff; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     PRELOADER
+══════════════════════════════════════════════════════════════ -->
+<div id="preloader">
+  <div id="counter">00</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     DESKTOP
+══════════════════════════════════════════════════════════════ -->
+<div id="desktop">
+
+  <!-- Desktop icons -->
+  <div id="icons">
+    <div class="icon" onclick="openWindow('about')">
+      <div class="icon-img">👤</div>
+      <span>About.exe</span>
+    </div>
+    <div class="icon" onclick="openWindow('projects')">
+      <div class="icon-img">📁</div>
+      <span>Projects</span>
+    </div>
+    <div class="icon" onclick="openWindow('contact')">
+      <div class="icon-img">✉️</div>
+      <span>Contact</span>
+    </div>
+  </div>
+
+  <!-- ── Window: About ──────────────────────────────────── -->
+  <div class="win" id="win-about" style="top:80px;left:160px;">
+    <div class="title-bar" data-win="about">
+      <span class="title-text">About — User Profile</span>
+      <div class="win-btn" onclick="minimizeWindow('about')">_</div>
+      <div class="win-btn" onclick="closeWindow('about')">✕</div>
+    </div>
+    <div class="menu-bar">
+      <span data-scramble>File</span>
+      <span data-scramble>Edit</span>
+      <span data-scramble>Help</span>
+    </div>
+    <div class="win-body">
+      <p style="font-weight:bold;font-size:16px;margin-bottom:6px;">
+        Hello, World. 👋
+      </p>
+      <p>I'm a <strong>creative developer</strong> building immersive digital experiences at the intersection of design and technology.</p>
+      <br/>
+      <p>→ Full-stack web development</p>
+      <p>→ Motion design &amp; GSAP animation</p>
+      <p>→ 3D &amp; WebGL experimentation</p>
+      <br/>
+      <p style="font-size:11px;color:#666;">System: Windows 95 Portfolio v1.0</p>
+    </div>
+  </div>
+
+  <!-- ── Window: Projects ───────────────────────────────── -->
+  <div class="win" id="win-projects" style="top:120px;left:420px;">
+    <div class="title-bar" data-win="projects">
+      <span class="title-text">📁 Projects</span>
+      <div class="win-btn" onclick="minimizeWindow('projects')">_</div>
+      <div class="win-btn" onclick="closeWindow('projects')">✕</div>
+    </div>
+    <div class="menu-bar">
+      <span data-scramble>View</span>
+      <span data-scramble>Sort</span>
+    </div>
+    <div class="win-body" style="min-width:280px;">
+      <div class="proj-card">
+        <h3 data-scramble>Project Alpha</h3>
+        <p>WebGL generative art — Three.js + GLSL shaders</p>
+      </div>
+      <div class="proj-card">
+        <h3 data-scramble>Project Beta</h3>
+        <p>Real-time collaborative whiteboard — Next.js + WebSockets</p>
+      </div>
+      <div class="proj-card">
+        <h3 data-scramble>Project Gamma</h3>
+        <p>AI-driven music visualizer — Tone.js + React</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Window: Contact ────────────────────────────────── -->
+  <div class="win" id="win-contact" style="top:200px;left:680px;">
+    <div class="title-bar" data-win="contact">
+      <span class="title-text">✉ Contact</span>
+      <div class="win-btn" onclick="minimizeWindow('contact')">_</div>
+      <div class="win-btn" onclick="closeWindow('contact')">✕</div>
+    </div>
+    <div class="menu-bar">
+      <span data-scramble>Send</span>
+      <span data-scramble>Options</span>
+    </div>
+    <div class="win-body" style="min-width:260px;">
+      <label style="font-size:11px;">Name:</label>
+      <input class="retro-input" type="text" placeholder="Your Name" />
+      <label style="font-size:11px;">Email:</label>
+      <input class="retro-input" type="email" placeholder="you@example.com" />
+      <label style="font-size:11px;">Message:</label>
+      <textarea class="retro-input" rows="3" placeholder="Say hello..."></textarea>
+      <button class="retro-btn" data-scramble>Send Message</button>
+    </div>
+  </div>
+
+</div><!-- /desktop -->
+
+<!-- ══════════════════════════════════════════════════════════
+     TASKBAR
+══════════════════════════════════════════════════════════════ -->
+<div id="taskbar">
+  <button id="start-btn" data-scramble>⊞ Start</button>
+  <div class="clock" id="clock">00:00</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════════════════════════════ -->
+<script>
+/* ── Utility ─────────────────────────────────────────────── */
+const $ = id => document.getElementById(id);
+
+/* ── Clock ───────────────────────────────────────────────── */
+function updateClock() {
+  const d = new Date();
+  $('clock').textContent = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+updateClock();
+setInterval(updateClock, 10000);
+
+/* ── Preloader ───────────────────────────────────────────── */
+(function initPreloader() {
+  const el = $('counter');
+  let current = 0;
+
+  // Simulate load progress, racing against actual load event
+  let resolved = false;
+
+  function animateTo(target, onDone) {
+    gsap.to({ val: current }, {
+      val: target,
+      duration: (target - current) * 0.012,
+      ease: 'power1.inOut',
+      onUpdate() {
+        current = Math.round(this.targets()[0].val);
+        el.textContent = String(current).padStart(2, '0');
+      },
+      onComplete: onDone
+    });
+  }
+
+  // Phase 1: rush to ~70 quickly
+  animateTo(70, () => {
+    // Phase 2: hold at 70 until page load fires, then finish
+    function finish() {
+      if (resolved) return;
+      resolved = true;
+      animateTo(100, exitPreloader);
+    }
+    if (document.readyState === 'complete') { finish(); }
+    else { window.addEventListener('load', finish, { once: true }); }
+  });
+
+  function exitPreloader() {
+    // Curtain slides up
+    gsap.to($('preloader'), {
+      yPercent: -100,
+      duration: 1.1,
+      ease: 'expo.inOut',
+      onComplete: () => { $('preloader').remove(); }
+    });
+  }
+})();
+
+/* ── Window Management ───────────────────────────────────── */
+let zCounter = 10;
+const hidden = {};   // track minimized state
+
+function bringToFront(id) {
+  document.querySelectorAll('.win').forEach(w => w.classList.remove('active'));
+  const w = $('win-' + id);
+  if (w) { w.style.zIndex = ++zCounter; w.classList.add('active'); }
+}
+
+function openWindow(id) {
+  const w = $('win-' + id);
+  if (!w) return;
+  w.style.display = 'block';
+  hidden[id] = false;
+  bringToFront(id);
+  gsap.fromTo(w, { scale: 0.85, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.25, ease: 'back.out(1.4)' });
+}
+
+function closeWindow(id) {
+  const w = $('win-' + id);
+  if (!w) return;
+  gsap.to(w, { scale: 0.85, opacity: 0, duration: 0.18, ease: 'power2.in',
+    onComplete: () => { w.style.display = 'none'; } });
+}
+
+function minimizeWindow(id) {
+  const w = $('win-' + id);
+  if (!w) return;
+  gsap.to(w, { y: 60, opacity: 0, duration: 0.2, ease: 'power2.in',
+    onComplete: () => { w.style.display = 'none'; gsap.set(w, { y: 0 }); } });
+  hidden[id] = true;
+}
+
+// Click title bar to bring to front
+document.querySelectorAll('.title-bar').forEach(tb => {
+  tb.addEventListener('mousedown', () => {
+    const id = tb.dataset.win;
+    if (id) bringToFront(id);
+  });
+});
+
+// All windows start visible
+['about', 'projects', 'contact'].forEach(id => bringToFront(id));
+
+/* ── interact.js: Draggable Windows ─────────────────────── */
+interact('.win').draggable({
+  allowFrom: '.title-bar',
+  listeners: {
+    start(e) { bringToFront(e.target.id.replace('win-', '')); },
+    move(e) {
+      const t = e.target;
+      const x = (parseFloat(t.getAttribute('data-x')) || 0) + e.dx;
+      const y = (parseFloat(t.getAttribute('data-y')) || 0) + e.dy;
+      t.style.transform = `translate(${x}px, ${y}px)`;
+      t.setAttribute('data-x', x);
+      t.setAttribute('data-y', y);
+    }
+  }
+});
+
+/* ── Text Scramble Effect ────────────────────────────────── */
+const SYMBOLS = '@#$%*!?&^~≠∑π√';
+
+function scramble(el) {
+  const original = el.dataset.original || el.textContent;
+  if (!el.dataset.original) el.dataset.original = original;
+
+  let frame = 0;
+  const totalFrames = 22; // ~400ms at ~55fps
+  let raf;
+
+  function tick() {
+    frame++;
+    if (frame >= totalFrames) {
+      el.textContent = original;
+      return;
+    }
+    const progress = frame / totalFrames;
+    // Characters settle left-to-right as progress increases
+    el.textContent = original.split('').map((ch, i) => {
+      if (ch === ' ') return ' ';
+      if (i / original.length < progress) return ch;
+      return SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+    }).join('');
+    raf = requestAnimationFrame(tick);
+  }
+
+  cancelAnimationFrame(raf);
+  tick();
+}
+
+document.querySelectorAll('[data-scramble]').forEach(el => {
+  el.addEventListener('mouseenter', () => scramble(el));
+});
+
+/* ── Modular Window Factory ──────────────────────────────── */
+/**
+ * Call addWindow({ id, title, icon, content }) to add more windows at runtime.
+ * Example:
+ *   addWindow({
+ *     id: 'skills',
+ *     title: '🛠 Skills',
+ *     icon: '🛠',
+ *     label: 'Skills',
+ *     content: '<p>JavaScript, GSAP, Three.js</p>'
+ *   });
+ */
+function addWindow({ id, title, icon = '🗂', label, content = '', top = 140, left = 300 }) {
+  // Desktop icon
+  const iconEl = document.createElement('div');
+  iconEl.className = 'icon';
+  iconEl.setAttribute('onclick', `openWindow('${id}')`);
+  iconEl.innerHTML = `<div class="icon-img">${icon}</div><span>${label || title}</span>`;
+  $('icons').appendChild(iconEl);
+
+  // Window element
+  const win = document.createElement('div');
+  win.className = 'win';
+  win.id = 'win-' + id;
+  win.style.cssText = `top:${top}px;left:${left}px;`;
+  win.innerHTML = `
+    <div class="title-bar" data-win="${id}">
+      <span class="title-text">${title}</span>
+      <div class="win-btn" onclick="minimizeWindow('${id}')">_</div>
+      <div class="win-btn" onclick="closeWindow('${id}')">✕</div>
+    </div>
+    <div class="win-body" style="min-width:260px;">${content}</div>
+  `;
+  $('desktop').appendChild(win);
+
+  // Wire drag + scramble on new window
+  interact(win).draggable({
+    allowFrom: '.title-bar',
+    listeners: {
+      start(e) { bringToFront(e.target.id.replace('win-', '')); },
+      move(e) {
+        const t = e.target;
+        const x = (parseFloat(t.getAttribute('data-x')) || 0) + e.dx;
+        const y = (parseFloat(t.getAttribute('data-y')) || 0) + e.dy;
+        t.style.transform = `translate(${x}px, ${y}px)`;
+        t.setAttribute('data-x', x);
+        t.setAttribute('data-y', y);
+      }
+    }
+  });
+
+  win.querySelector('.title-bar').addEventListener('mousedown', () => bringToFront(id));
+  win.querySelectorAll('[data-scramble]').forEach(el => {
+    el.addEventListener('mouseenter', () => scramble(el));
+  });
+
+  openWindow(id);
+}
+</script>
+</body>
+</html>
