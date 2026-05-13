@@ -92,40 +92,115 @@
     /* ── Taskbar ──────────────────────────────────────────── */
     #taskbar {
       position: fixed; bottom: 0; left: 0; right: 0;
-      height: 36px; background: #c0c0c0;
+      height: 50px; background: #c0c0c0;
       border-top: 2px solid #fff;
-      display: flex; align-items: center; gap: 4px; padding: 0 4px;
+      display: flex; align-items: center; gap: 4px; padding: 0 6px;
       z-index: 9000;
     }
     #start-btn {
-      display: flex; align-items: center; gap: 5px;
-      padding: 2px 8px; height: 26px;
+      display: flex; align-items: center; gap: 6px;
+      padding: 4px 12px; height: 38px;
       background: #c0c0c0;
       border: 2px solid #fff;
       border-right-color: #000; border-bottom-color: #000;
-      font-size: 12px; font-weight: bold; cursor: pointer;
+      font-size: 14px; font-weight: bold; cursor: pointer;
+      flex-shrink: 0;
     }
     #start-btn:hover { background: #dfdfdf; }
+    #start-btn.active {
+      border-color: #000; border-right-color: #fff; border-bottom-color: #fff;
+      background: #b0b0b0;
+    }
+
+    /* ── Quick Launch ─────────────────────────────────────── */
+    #quick-launch {
+      display: flex; align-items: center; gap: 2px;
+      padding: 0 6px; height: 38px;
+      border-left: 1px solid #868686; border-right: 1px solid #fff;
+      margin-left: 4px;
+    }
+    .ql-icon {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .ql-icon:hover {
+      border-color: #fff; border-right-color: #868686; border-bottom-color: #868686;
+      background: #d0d0d0;
+    }
+
+    /* ── Taskbar divider ──────────────────────────────────── */
+    .tb-sep {
+      width: 1px; height: 32px;
+      background: #868686; margin: 0 4px;
+      box-shadow: 1px 0 0 #fff;
+    }
+
+    /* ── Clock ────────────────────────────────────────────── */
     .clock {
-      margin-left: auto; padding: 2px 8px;
+      margin-left: auto; padding: 4px 10px;
       border: 1px solid #868686; border-top-color: transparent; border-left-color: transparent;
-      font-size: 11px;
+      font-size: 13px; text-align: center; line-height: 1.3;
+    }
+
+    /* ── Start Menu ───────────────────────────────────────── */
+    #start-menu {
+      position: fixed; bottom: 52px; left: 6px;
+      width: 220px;
+      background: #c0c0c0;
+      border: 2px solid #fff;
+      border-right-color: #000; border-bottom-color: #000;
+      box-shadow: 2px 2px 0 #868686;
+      z-index: 9500;
+      display: none;
+    }
+    #start-menu .sm-header {
+      background: linear-gradient(180deg, #000080, #1084d0);
+      color: #fff; font-weight: bold; font-size: 13px;
+      padding: 10px 8px; writing-mode: horizontal-tb;
+      letter-spacing: 0.05em;
+      display: flex; align-items: center; gap: 8px;
+    }
+    #start-menu .sm-avatar {
+      width: 36px; height: 36px; border-radius: 0;
+      background: #c0c0c0; display: flex; align-items: center;
+      justify-content: center; font-size: 22px;
+      border: 2px solid #fff;
+    }
+    .sm-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 12px; font-size: 12px; cursor: pointer;
+    }
+    .sm-item:hover { background: #000080; color: #fff; }
+    .sm-item .sm-icon { font-size: 16px; width: 20px; text-align: center; }
+    .sm-divider {
+      height: 1px; background: #868686;
+      margin: 2px 0; box-shadow: 0 1px 0 #fff;
     }
 
     /* ── Desktop Icons ────────────────────────────────────── */
     .icon {
       display: flex; flex-direction: column; align-items: center;
-      gap: 4px; padding: 8px; width: 72px;
+      gap: 4px; padding: 6px; width: 76px; height: 80px;
       cursor: pointer; color: #fff;
       font-size: 11px; text-align: center;
     }
-    .icon:hover .icon-img { outline: 1px dashed #fff; }
+    .icon:hover { background: rgba(255,255,255,0.08); }
+    .icon:hover .icon-img { outline: 1px dashed #fff; background: rgba(0,0,128,0.3); }
     .icon-img {
       width: 32px; height: 32px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 22px;
+      font-size: 24px;
     }
-    #icons { position: absolute; top: 12px; left: 12px; display: flex; flex-direction: column; gap: 4px; }
+    /* Strict vertical grid — each cell is fixed 80px tall */
+    #icons {
+      position: absolute; top: 12px; left: 12px;
+      display: grid;
+      grid-template-columns: 76px;
+      grid-auto-rows: 80px;
+      gap: 0;
+    }
 
     /* ── Scramble ─────────────────────────────────────────── */
     [data-scramble] { cursor: pointer; display: inline-block; }
@@ -176,17 +251,31 @@
 
   <!-- Desktop icons -->
   <div id="icons">
+    <!-- Window apps -->
     <div class="icon" onclick="openWindow('about')">
       <div class="icon-img">👤</div>
-      <span>About.exe</span>
+      <span data-scramble>About.exe</span>
     </div>
     <div class="icon" onclick="openWindow('projects')">
       <div class="icon-img">📁</div>
-      <span>Projects</span>
+      <span data-scramble>Projects</span>
     </div>
     <div class="icon" onclick="openWindow('contact')">
       <div class="icon-img">✉️</div>
-      <span>Contact</span>
+      <span data-scramble>Contact</span>
+    </div>
+    <!-- Link apps -->
+    <div class="icon" onclick="openLink('https://github.com')">
+      <div class="icon-img">🐙</div>
+      <span data-scramble>GitHub</span>
+    </div>
+    <div class="icon" onclick="openLink('https://linkedin.com')">
+      <div class="icon-img">💼</div>
+      <span data-scramble>LinkedIn</span>
+    </div>
+    <div class="icon" onclick="openLink('#resume')">
+      <div class="icon-img">📄</div>
+      <span data-scramble>Resume.pdf</span>
     </div>
   </div>
 
@@ -268,10 +357,53 @@
 </div><!-- /desktop -->
 
 <!-- ══════════════════════════════════════════════════════════
+     START MENU (fly-out, hidden by default)
+══════════════════════════════════════════════════════════════ -->
+<div id="start-menu">
+  <div class="sm-header">
+    <div class="sm-avatar">👤</div>
+    <span>Portfolio OS</span>
+  </div>
+  <div class="sm-item" onclick="openWindow('about');closeStartMenu()">
+    <span class="sm-icon">👤</span> <span data-scramble>About Me</span>
+  </div>
+  <div class="sm-item" onclick="openWindow('projects');closeStartMenu()">
+    <span class="sm-icon">📁</span> <span data-scramble>Projects</span>
+  </div>
+  <div class="sm-item" onclick="openWindow('contact');closeStartMenu()">
+    <span class="sm-icon">✉️</span> <span data-scramble>Contact</span>
+  </div>
+  <div class="sm-divider"></div>
+  <div class="sm-item" onclick="openLink('https://github.com');closeStartMenu()">
+    <span class="sm-icon">🐙</span> <span data-scramble>GitHub</span>
+  </div>
+  <div class="sm-item" onclick="openLink('https://linkedin.com');closeStartMenu()">
+    <span class="sm-icon">💼</span> <span data-scramble>LinkedIn</span>
+  </div>
+  <div class="sm-item" onclick="openLink('#resume');closeStartMenu()">
+    <span class="sm-icon">📄</span> <span data-scramble>Resume.pdf</span>
+  </div>
+  <div class="sm-divider"></div>
+  <div class="sm-item" onclick="closeStartMenu()">
+    <span class="sm-icon">⏻</span> <span data-scramble>Shut Down…</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
      TASKBAR
 ══════════════════════════════════════════════════════════════ -->
 <div id="taskbar">
-  <button id="start-btn" data-scramble>⊞ Start</button>
+  <button id="start-btn" onclick="toggleStartMenu()">⊞ Start</button>
+
+  <!-- Quick Launch -->
+  <div id="quick-launch">
+    <div class="ql-icon" title="About" onclick="openWindow('about')" data-scramble>👤</div>
+    <div class="ql-icon" title="Projects" onclick="openWindow('projects')" data-scramble>📁</div>
+    <div class="ql-icon" title="Contact" onclick="openWindow('contact')" data-scramble>✉️</div>
+  </div>
+
+  <div class="tb-sep"></div>
+
   <div class="clock" id="clock">00:00</div>
 </div>
 
@@ -395,15 +527,15 @@ interact('.win').draggable({
   }
 });
 
-/* ── Text Scramble Effect ────────────────────────────────── */
+/* ── Text Scramble Effect (500ms) ────────────────────────── */
 const SYMBOLS = '@#$%*!?&^~≠∑π√';
 
 function scramble(el) {
-  const original = el.dataset.original || el.textContent;
+  const original = el.dataset.original || el.textContent.trim();
   if (!el.dataset.original) el.dataset.original = original;
 
   let frame = 0;
-  const totalFrames = 22; // ~400ms at ~55fps
+  const totalFrames = 28; // ~500ms at ~56fps
   let raf;
 
   function tick() {
@@ -413,7 +545,6 @@ function scramble(el) {
       return;
     }
     const progress = frame / totalFrames;
-    // Characters settle left-to-right as progress increases
     el.textContent = original.split('').map((ch, i) => {
       if (ch === ' ') return ' ';
       if (i / original.length < progress) return ch;
@@ -426,9 +557,92 @@ function scramble(el) {
   tick();
 }
 
-document.querySelectorAll('[data-scramble]').forEach(el => {
-  el.addEventListener('mouseenter', () => scramble(el));
+function bindScramble(root) {
+  (root || document).querySelectorAll('[data-scramble]').forEach(el => {
+    // Avoid double-binding
+    if (el.dataset.scrambleBound) return;
+    el.dataset.scrambleBound = '1';
+    el.addEventListener('mouseenter', () => scramble(el));
+  });
+}
+bindScramble();
+
+/* ── Web Audio Click Sound ───────────────────────────────── */
+let audioCtx = null;
+
+function playClickSound() {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(220, audioCtx.currentTime + 0.12);
+    gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+    osc.start(audioCtx.currentTime);
+    osc.stop(audioCtx.currentTime + 0.15);
+  } catch (_) { /* AudioContext not available — silent fail */ }
+}
+
+/* ── Link App Handler ────────────────────────────────────── */
+function openLink(url) {
+  playClickSound();
+  // Short delay so the sound fires before navigation
+  setTimeout(() => {
+    if (url === '#resume') {
+      // Replace with your actual resume URL or file path
+      alert('Resume download coming soon!');
+    } else {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+  }, 120);
+}
+
+/* ── Start Menu ──────────────────────────────────────────── */
+let startMenuOpen = false;
+
+function toggleStartMenu() {
+  const menu = $('start-menu');
+  const btn  = $('start-btn');
+  startMenuOpen = !startMenuOpen;
+  if (startMenuOpen) {
+    menu.style.display = 'block';
+    btn.classList.add('active');
+    gsap.fromTo(menu,
+      { opacity: 0, y: 12 },
+      { opacity: 1, y: 0, duration: 0.18, ease: 'power2.out' }
+    );
+  } else {
+    closeStartMenu();
+  }
+}
+
+function closeStartMenu() {
+  const menu = $('start-menu');
+  const btn  = $('start-btn');
+  if (!startMenuOpen && menu.style.display === 'none') return;
+  startMenuOpen = false;
+  btn.classList.remove('active');
+  gsap.to(menu, {
+    opacity: 0, y: 12, duration: 0.14, ease: 'power2.in',
+    onComplete: () => { menu.style.display = 'none'; }
+  });
+}
+
+// Close start menu when clicking anywhere outside it
+document.addEventListener('mousedown', e => {
+  if (startMenuOpen && !$('start-menu').contains(e.target) && e.target !== $('start-btn')) {
+    closeStartMenu();
+  }
 });
+
+// Bind scramble on start menu (deferred so DOM is settled)
+document.addEventListener('DOMContentLoaded', () => bindScramble($('start-menu')), { once: true });
+// Also bind immediately in case DOMContentLoaded already fired
+if (document.readyState !== 'loading') bindScramble($('start-menu'));
 
 /* ── Modular Window Factory ──────────────────────────────── */
 /**
@@ -482,9 +696,7 @@ function addWindow({ id, title, icon = '🗂', label, content = '', top = 140, l
   });
 
   win.querySelector('.title-bar').addEventListener('mousedown', () => bringToFront(id));
-  win.querySelectorAll('[data-scramble]').forEach(el => {
-    el.addEventListener('mouseenter', () => scramble(el));
-  });
+  bindScramble(win);
 
   openWindow(id);
 }
