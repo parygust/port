@@ -3,693 +3,994 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Portfolio — Retro OS</title>
+  <title>enes baş — Portfolio OS</title>
 
+  <!-- Pixel font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+
+  <!-- GSAP -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <!-- interact.js -->
   <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 
   <style>
-    /* ── Reset ────────────────────────────────────────────── */
+    /* ═══════════════════════════════════════════════════════
+       RESET & ROOT
+    ═══════════════════════════════════════════════════════ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { overflow: hidden; background: #008080; font-family: 'Courier New', monospace; }
 
-    /* ── Preloader ────────────────────────────────────────── */
+    :root {
+      --teal:      #008080;
+      --teal-dark: #006060;
+      --silver:    #c0c0c0;
+      --white:     #ffffff;
+      --black:     #000000;
+      --mid:       #868686;
+      --light:     #dfdfdf;
+      --navy:      #000080;
+      --blue2:     #1084d0;
+      --font-ui:   'Share Tech Mono', 'Courier New', monospace;
+      --font-px:   'VT323', monospace;
+    }
+
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+    body {
+      background: var(--teal);
+      font-family: var(--font-ui);
+      font-size: 13px;
+      color: #000;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       PRELOADER  (black · white counter · curtain up)
+    ═══════════════════════════════════════════════════════ */
     #preloader {
       position: fixed; inset: 0; z-index: 9999;
-      background: #fff; display: flex;
-      align-items: center; justify-content: center;
+      background: #000;
+      display: flex; align-items: center; justify-content: center;
     }
     #counter {
-      font-size: clamp(4rem, 12vw, 9rem);
-      font-weight: 900; color: #000;
-      letter-spacing: -0.04em; line-height: 1;
-      font-variant-numeric: tabular-nums;
+      font-family: var(--font-px);
+      font-size: clamp(5rem, 14vw, 11rem);
+      color: #fff;
+      letter-spacing: 0.06em;
+      line-height: 1;
+      image-rendering: pixelated;
     }
 
-    /* ── Desktop ──────────────────────────────────────────── */
+    /* ═══════════════════════════════════════════════════════
+       DESKTOP
+    ═══════════════════════════════════════════════════════ */
     #desktop {
-      width: 100vw; height: 100vh; position: relative;
+      position: relative;
+      width: 100vw; height: 100vh;
+      /* solid teal + 1-px dark-teal grid */
       background:
-        repeating-linear-gradient(0deg,  transparent, transparent 39px, rgba(0,0,0,.07) 39px, rgba(0,0,0,.07) 40px),
-        repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(0,0,0,.07) 39px, rgba(0,0,0,.07) 40px),
-        #008080;
+        repeating-linear-gradient(0deg,   transparent, transparent 39px, rgba(0,80,80,.35) 39px, rgba(0,80,80,.35) 40px),
+        repeating-linear-gradient(90deg,  transparent, transparent 39px, rgba(0,80,80,.35) 39px, rgba(0,80,80,.35) 40px),
+        var(--teal);
     }
 
-    /* ── Desktop Icons (128 px) ───────────────────────────── */
+    /* ═══════════════════════════════════════════════════════
+       DESKTOP ICONS  (128 px jumbo)
+    ═══════════════════════════════════════════════════════ */
     #icons {
-      position: absolute; top: 12px; left: 12px;
+      position: absolute; top: 14px; left: 14px;
       display: grid;
-      grid-template-columns: 148px;
-      grid-auto-rows: 168px;
+      grid-template-columns: 152px;
+      grid-auto-rows: 172px;
+      z-index: 1;
     }
     .icon {
       display: flex; flex-direction: column; align-items: center;
       justify-content: flex-start;
-      gap: 8px; padding: 10px 6px;
-      width: 148px; height: 168px;
+      gap: 6px; padding: 10px 4px 6px;
+      width: 152px; height: 172px;
       cursor: pointer; color: #fff;
-      font-size: 12px; text-align: center;
+      text-align: center;
     }
-    .icon:hover { background: rgba(255,255,255,0.1); }
-    .icon:hover .icon-img { outline: 2px dashed rgba(255,255,255,.9); background: rgba(0,0,128,.35); }
+    .icon:hover  { background: rgba(255,255,255,.12); }
+    .icon:focus  { outline: 1px dotted #fff; }
+    .icon:hover .icon-img {
+      outline: 1px dashed rgba(255,255,255,.9);
+      background: rgba(0,0,128,.4);
+    }
     .icon-img {
       width: 128px; height: 128px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 80px; image-rendering: pixelated; flex-shrink: 0;
+      font-size: 84px;
+      image-rendering: pixelated;
+      flex-shrink: 0;
+      line-height: 1;
     }
-    .icon span { max-width: 136px; word-break: break-word; text-shadow: 1px 1px 2px #000; }
+    .icon-label {
+      font-family: var(--font-px);
+      font-size: 16px;
+      color: #fff;
+      text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
+      max-width: 144px;
+      word-break: break-word;
+      line-height: 1.2;
+      image-rendering: pixelated;
+    }
 
-    /* ── Window chrome ────────────────────────────────────── */
+    /* ═══════════════════════════════════════════════════════
+       WIN95 3-D BEVEL HELPERS
+    ═══════════════════════════════════════════════════════ */
+    .bevel-out {            /* raised surface */
+      border: 2px solid;
+      border-color: var(--light) var(--black) var(--black) var(--light);
+      box-shadow: inset 1px 1px 0 var(--white), inset -1px -1px 0 var(--mid);
+    }
+    .bevel-in {             /* sunken / pressed */
+      border: 2px solid;
+      border-color: var(--mid) var(--light) var(--light) var(--mid);
+      box-shadow: inset 1px 1px 0 var(--black), inset -1px -1px 0 var(--light);
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       WINDOW CHROME
+    ═══════════════════════════════════════════════════════ */
     .win {
       position: absolute;
-      min-width: 320px; min-height: 180px;
-      background: #c0c0c0;
-      border: 2px solid #fff;
-      border-right-color: #000; border-bottom-color: #000;
-      box-shadow: 2px 2px 0 #868686, inset 1px 1px 0 #dfdfdf;
+      min-width: 320px; min-height: 200px;
+      background: var(--silver);
+      border: 2px solid;
+      border-color: var(--light) var(--black) var(--black) var(--light);
+      box-shadow: inset 1px 1px 0 var(--white), inset -1px -1px 0 var(--mid),
+                  2px 2px 6px rgba(0,0,0,.4);
+      display: flex; flex-direction: column;
+      overflow: hidden;
       user-select: none;
-      /* flex column so win-content fills remaining space */
-      display: flex; flex-direction: column; overflow: hidden;
     }
-    .win.active { z-index: 100; }
 
-    /* SE-corner resize grip (visual only) */
+    /* SE corner resize grip */
     .win::after {
       content: '';
-      position: absolute; bottom: 3px; right: 3px;
-      width: 10px; height: 10px;
+      position: absolute; bottom: 2px; right: 2px;
+      width: 12px; height: 12px;
       background: repeating-linear-gradient(
         -45deg,
-        #868686 0px, #868686 1px,
+        var(--mid) 0px, var(--mid) 1px,
         transparent 1px, transparent 3px
       );
       pointer-events: none;
     }
 
+    /* Title bar */
     .title-bar {
-      display: flex; align-items: center; gap: 4px;
-      padding: 3px 4px; flex-shrink: 0;
-      background: linear-gradient(90deg, #000080, #1084d0);
-      color: #fff; font-size: 12px; font-weight: bold;
+      flex-shrink: 0;
+      display: flex; align-items: center; gap: 3px;
+      padding: 3px 3px 3px 6px;
+      background: linear-gradient(90deg, var(--navy) 0%, var(--blue2) 100%);
       cursor: move;
     }
-    .title-bar .title-text { flex: 1; pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .title-text {
+      flex: 1;
+      font-family: var(--font-ui);
+      font-size: 12px; font-weight: bold;
+      color: #fff;
+      pointer-events: none;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .title-icon { font-size: 14px; margin-right: 4px; pointer-events: none; }
 
+    /* Title buttons */
     .win-btn {
-      width: 16px; height: 14px; flex-shrink: 0;
-      background: #c0c0c0;
-      border: 1px solid #fff; border-right-color: #000; border-bottom-color: #000;
+      flex-shrink: 0;
+      width: 17px; height: 15px;
+      background: var(--silver);
+      border: 1px solid;
+      border-color: var(--white) var(--black) var(--black) var(--white);
+      box-shadow: inset 1px 1px 0 var(--light), inset -1px -1px 0 var(--mid);
       display: flex; align-items: center; justify-content: center;
       font-size: 9px; font-weight: bold; color: #000;
       cursor: pointer; line-height: 1;
+      font-family: var(--font-ui);
     }
-    .win-btn:hover { background: #dfdfdf; }
-    .win-btn:active { border-color: #000; border-right-color: #fff; border-bottom-color: #fff; }
+    .win-btn:hover { background: var(--light); }
+    .win-btn:active {
+      border-color: var(--black) var(--white) var(--white) var(--black);
+      box-shadow: inset 1px 1px 0 var(--mid);
+    }
 
+    /* Menu bar */
     .menu-bar {
-      background: #c0c0c0; border-bottom: 1px solid #868686;
-      padding: 2px 8px; font-size: 12px; display: flex; gap: 12px;
       flex-shrink: 0;
-    }
-    .menu-bar span { cursor: pointer; padding: 1px 4px; text-decoration: underline; }
-    .menu-bar span:hover { background: #000080; color: #fff; }
-
-    /* scrollable inner wrapper */
-    .win-content { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; }
-
-    .win-body { padding: 14px 16px; font-size: 13px; color: #000; line-height: 1.7; }
-
-    /* ── Tab system ───────────────────────────────────────── */
-    .tab-bar {
       display: flex; gap: 0;
-      background: #c0c0c0; border-bottom: 2px solid #868686;
-      padding: 4px 4px 0; flex-shrink: 0;
+      background: var(--silver);
+      border-bottom: 1px solid var(--mid);
+      padding: 2px 4px;
+    }
+    .menu-item {
+      font-size: 12px; font-family: var(--font-ui);
+      padding: 2px 8px; cursor: pointer;
+      text-decoration: underline; text-underline-offset: 2px;
+    }
+    .menu-item:hover { background: var(--navy); color: #fff; }
+
+    /* Scrollable content area */
+    .win-content {
+      flex: 1; min-height: 0;
+      overflow-y: auto; overflow-x: hidden;
+    }
+    .win-content::-webkit-scrollbar { width: 16px; }
+    .win-content::-webkit-scrollbar-track {
+      background: var(--silver);
+      border-left: 1px solid var(--mid);
+    }
+    .win-content::-webkit-scrollbar-thumb {
+      background: var(--silver);
+      border: 1px solid;
+      border-color: var(--white) var(--mid) var(--mid) var(--white);
+      box-shadow: inset 1px 1px 0 var(--light);
+    }
+    .win-body { padding: 14px 16px; line-height: 1.7; }
+
+    /* ═══════════════════════════════════════════════════════
+       TAB SYSTEM
+    ═══════════════════════════════════════════════════════ */
+    .tab-bar {
+      flex-shrink: 0;
+      display: flex;
+      background: var(--silver);
+      border-bottom: 2px solid var(--mid);
+      padding: 4px 4px 0;
+      gap: 2px;
     }
     .tab-btn {
-      padding: 4px 14px; font-size: 12px;
-      border: 2px solid #868686; border-bottom: none;
-      background: #a8a8a8; cursor: pointer; margin-right: 2px;
-      font-family: inherit;
-      border-top-color: #fff; border-left-color: #fff;
+      padding: 4px 16px; font-size: 12px;
+      font-family: var(--font-ui);
+      background: #a8a8a8; cursor: pointer;
+      border: 1px solid;
+      border-color: var(--white) var(--mid) transparent var(--white);
     }
     .tab-btn.active {
-      background: #c0c0c0; border-color: #fff; border-right-color: #868686;
+      background: var(--silver);
+      border-bottom-color: var(--silver);
       position: relative; top: 2px;
+      z-index: 1;
     }
+    .tab-btn:hover:not(.active) { background: #bbb; }
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
-    /* ── Social cards ─────────────────────────────────────── */
-    .social-card {
-      background: #fff;
-      border: 1px solid #868686; border-right-color: #000; border-bottom-color: #000;
-      margin-bottom: 10px;
-    }
-    .social-card-inner { padding: 14px 16px; }
-    .social-card h3 { font-size: 14px; font-weight: bold; margin-bottom: 4px; }
-    .social-card p  { font-size: 12px; color: #333; margin-bottom: 8px; line-height: 1.5; }
-    .social-link {
-      display: inline-block; padding: 4px 12px; font-size: 12px;
-      background: #c0c0c0; border: 2px solid #fff;
-      border-right-color: #000; border-bottom-color: #000;
-      cursor: pointer; text-decoration: none; color: #000; font-family: inherit;
-    }
-    .social-link:hover { background: #dfdfdf; }
-
-    /* LinkedIn-style header banner */
+    /* ═══════════════════════════════════════════════════════
+       SOCIAL HUB — LINKEDIN TAB
+    ═══════════════════════════════════════════════════════ */
     .li-banner {
-      height: 60px;
-      background: linear-gradient(135deg, #004471, #0077b5 60%, #00a0dc);
+      height: 72px;
+      background: linear-gradient(135deg, #003c5a 0%, #0077b5 55%, #00a0dc 100%);
+      position: relative;
     }
-    .li-avatar-wrap {
-      display: flex; align-items: flex-end; gap: 12px;
-      padding: 0 16px; margin-top: -28px; margin-bottom: 8px;
+    .li-banner-pattern {
+      position: absolute; inset: 0; opacity: .12;
+      background: repeating-linear-gradient(
+        45deg,
+        #fff 0px, #fff 1px,
+        transparent 1px, transparent 12px
+      );
+    }
+    .li-avatar-row {
+      display: flex; align-items: flex-end; gap: 14px;
+      padding: 0 16px; margin-top: -38px; margin-bottom: 10px;
     }
     .li-avatar {
-      width: 56px; height: 56px; border-radius: 4px;
-      background: #c0c0c0; border: 3px solid #fff;
+      width: 76px; height: 76px; border-radius: 50%;
+      background: #dde; border: 4px solid #fff;
       display: flex; align-items: center; justify-content: center;
-      font-size: 32px; flex-shrink: 0;
+      font-size: 42px; flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,.3);
+      image-rendering: pixelated;
     }
-    .li-name { font-weight: bold; font-size: 15px; line-height: 1.2; }
-    .li-title { font-size: 12px; color: #555; }
-
+    .li-name-block { padding-top: 40px; }
+    .li-name { font-size: 18px; font-weight: bold; line-height: 1.1; }
+    .li-headline { font-size: 11px; color: #333; line-height: 1.4; max-width: 280px; }
     .li-section { padding: 10px 16px; border-top: 1px solid #d0d0d0; }
-    .li-section h4 { font-size: 12px; font-weight: bold; margin-bottom: 6px; color: #333; }
-    .li-exp-item { display: flex; gap: 10px; margin-bottom: 8px; font-size: 12px; }
-    .li-exp-icon { font-size: 18px; flex-shrink: 0; }
-    .li-exp-title { font-weight: bold; }
-    .li-exp-sub { color: #666; font-size: 11px; }
-
-    .skill-tag {
-      display: inline-block; padding: 2px 8px;
-      background: #e8f3fb; border: 1px solid #0077b5;
-      font-size: 11px; color: #0077b5; margin: 2px;
+    .li-section-title { font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: .05em; color: #555; margin-bottom: 8px; }
+    .li-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start; }
+    .li-row-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+    .li-row-body { font-size: 12px; line-height: 1.4; }
+    .li-row-title { font-weight: bold; }
+    .li-row-sub { color: #555; font-size: 11px; }
+    .skill-chip {
+      display: inline-block; margin: 2px;
+      padding: 2px 8px; font-size: 11px;
+      background: #e8f3fb; border: 1px solid #0077b5; color: #0077b5;
     }
+    .li-open-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 14px; font-size: 12px;
+      background: #0077b5; color: #fff; border: none;
+      cursor: pointer; font-family: var(--font-ui);
+    }
+    .li-open-btn:hover { background: #005f99; }
 
-    /* itch.io gallery */
+    /* ═══════════════════════════════════════════════════════
+       SOCIAL HUB — ITCH.IO TAB  (Game Library)
+    ═══════════════════════════════════════════════════════ */
     .itch-header {
-      background: linear-gradient(135deg, #1a1a1a, #333);
-      padding: 12px 16px; color: #fff;
+      background: #1a1a1a; padding: 12px 14px;
+      display: flex; align-items: center; gap: 10px;
     }
-    .itch-header h3 { font-size: 14px; font-weight: bold; }
-    .itch-header p  { font-size: 11px; color: #aaa; margin-top: 2px; }
-    .game-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 8px; padding: 12px;
-      background: #1a1a1a;
-    }
+    .itch-logo { font-size: 22px; }
+    .itch-title { font-weight: bold; color: #fff; font-size: 14px; }
+    .itch-sub   { color: #888; font-size: 11px; }
+    .game-list  { background: #111; padding: 10px 12px; display: flex; flex-direction: column; gap: 10px; }
+
     .game-card {
-      background: #2a2a2a;
-      border: 1px solid #444; cursor: pointer;
-      transition: border-color 0.15s;
+      display: flex; gap: 12px; align-items: flex-start;
+      background: #1e1e1e; border: 1px solid #333;
+      padding: 10px; cursor: pointer;
     }
     .game-card:hover { border-color: #fa5c5c; }
+
     .game-thumb {
-      width: 100%; aspect-ratio: 16/9;
-      background: #111;
+      width: 100px; height: 72px;
+      flex-shrink: 0; overflow: hidden;
+      image-rendering: pixelated;
       display: flex; align-items: center; justify-content: center;
-      font-size: 36px;
     }
-    .game-info { padding: 8px 10px; }
-    .game-title { font-size: 13px; font-weight: bold; color: #fff; margin-bottom: 2px; }
-    .game-desc  { font-size: 11px; color: #aaa; line-height: 1.4; }
-    .game-tags  { margin-top: 6px; display: flex; gap: 4px; flex-wrap: wrap; }
+
+    /* Per-game pixel-art backgrounds */
+    .thumb-sky {
+      background: linear-gradient(180deg, #0a0018 0%, #1a0050 40%, #3a1080 70%, #6030c0 100%);
+      font-size: 32px; flex-direction: column; gap: 2px;
+    }
+    .thumb-objects {
+      background: linear-gradient(180deg, #0d1f0d 0%, #1a3a1a 100%);
+      font-size: 28px;
+    }
+    .thumb-vampire {
+      background: linear-gradient(180deg, #1a0005 0%, #330010 50%, #550025 100%);
+      font-size: 28px;
+    }
+
+    .game-info { flex: 1; min-width: 0; }
+    .game-title { font-size: 14px; font-weight: bold; color: #fff; margin-bottom: 3px; }
+    .game-red-tag { color: #fa5c5c; font-size: 11px; margin-bottom: 6px; }
+    .game-tags { display: flex; gap: 4px; flex-wrap: wrap; }
     .game-tag {
-      font-size: 10px; padding: 1px 5px;
-      background: #333; color: #ccc; border: 1px solid #555;
+      font-size: 10px; padding: 1px 6px;
+      background: #2a2a2a; color: #aaa; border: 1px solid #444;
     }
-    .game-tag.jam { border-color: #fa5c5c; color: #fa5c5c; background: #1a0808; }
     .itch-footer {
-      background: #111; padding: 10px 16px;
+      background: #0f0f0f; padding: 10px 14px;
       display: flex; justify-content: space-between; align-items: center;
     }
-    .itch-footer p { font-size: 11px; color: #888; }
-
-    /* GitHub activity */
-    .gh-header {
-      display: flex; align-items: center; gap: 12px;
-      padding: 12px 16px; background: #0d1117; color: #e6edf3;
+    .itch-footer-text { color: #666; font-size: 11px; }
+    .itch-visit-btn {
+      padding: 5px 14px; font-size: 12px;
+      background: #fa5c5c; color: #fff; border: none;
+      cursor: pointer; font-family: var(--font-ui);
     }
-    .gh-avatar { font-size: 40px; }
-    .gh-name   { font-weight: bold; font-size: 15px; }
+    .itch-visit-btn:hover { background: #e04040; }
+
+    /* ═══════════════════════════════════════════════════════
+       SOCIAL HUB — GITHUB TAB
+    ═══════════════════════════════════════════════════════ */
+    .gh-profile {
+      background: #0d1117; padding: 14px 16px;
+      display: flex; align-items: center; gap: 14px;
+      border-bottom: 1px solid #30363d;
+    }
+    .gh-avatar { font-size: 48px; }
+    .gh-name   { font-weight: bold; font-size: 16px; color: #e6edf3; }
     .gh-sub    { font-size: 11px; color: #768390; }
-    .gh-stats  { display: flex; gap: 20px; padding: 10px 16px; background: #161b22; border-bottom: 1px solid #30363d; }
-    .gh-stat   { text-align: center; }
-    .gh-stat-n { font-weight: bold; font-size: 16px; color: #e6edf3; }
-    .gh-stat-l { font-size: 10px; color: #768390; }
-    .gh-chart-wrap {
-      background: #0d1117; padding: 12px 16px;
+    .gh-stats-bar {
+      background: #161b22; border-bottom: 1px solid #30363d;
+      display: flex; padding: 8px 16px; gap: 24px;
     }
-    .gh-chart-wrap img { max-width: 100%; display: block; filter: invert(1) hue-rotate(180deg); }
-    .gh-chart-fallback { font-size: 11px; color: #768390; text-align: center; padding: 8px 0; }
-    .gh-footer { background: #0d1117; padding: 10px 16px; }
+    .gh-stat { text-align: center; }
+    .gh-stat-n { font-weight: bold; color: #e6edf3; font-size: 16px; }
+    .gh-stat-l { color: #768390; font-size: 10px; }
 
-    /* ── Adobe Acrobat title bar ──────────────────────────── */
-    #win-resume .title-bar { background: linear-gradient(90deg, #8B0000, #c00000); }
-
-    .acrobat-toolbar {
-      background: #d4d0c8; border-bottom: 1px solid #868686;
-      padding: 4px 6px; display: flex; align-items: center; gap: 6px;
-      font-size: 11px; flex-shrink: 0;
+    /* Repos */
+    .gh-section-title {
+      padding: 10px 16px 6px;
+      font-size: 11px; font-weight: bold;
+      text-transform: uppercase; letter-spacing: .04em;
+      color: #768390; background: #0d1117;
     }
-    .acrobat-toolbar .tb-btn {
-      padding: 3px 10px; background: #c0c0c0;
-      border: 1px solid #fff; border-right-color: #868686; border-bottom-color: #868686;
-      font-size: 11px; cursor: pointer; font-family: inherit;
+    .gh-repo {
+      background: #0d1117; border-bottom: 1px solid #21262d;
+      padding: 10px 16px; display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer;
     }
-    .acrobat-toolbar .tb-btn:hover { background: #d0d0d0; }
+    .gh-repo:hover { background: #161b22; }
+    .gh-repo-name { font-weight: bold; color: #58a6ff; font-size: 13px; }
+    .gh-repo-desc { color: #8b949e; font-size: 11px; margin-top: 2px; }
+    .gh-repo-lang {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 11px; color: #8b949e;
+    }
+    .lang-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
 
-    .pdf-viewport {
+    /* Contribution heatmap */
+    .gh-heatmap-wrap {
+      background: #0d1117; padding: 12px 16px 16px;
+    }
+    .gh-heatmap-label { color: #768390; font-size: 10px; margin-bottom: 6px; }
+    #gh-heatmap {
+      display: grid;
+      grid-template-columns: repeat(52, 11px);
+      grid-template-rows: repeat(7, 11px);
+      grid-auto-flow: column;
+      gap: 2px;
+    }
+    .gh-cell {
+      width: 11px; height: 11px;
+      border-radius: 2px;
+      image-rendering: pixelated;
+    }
+    .gh-footer {
+      background: #0d1117; padding: 10px 16px;
+      border-top: 1px solid #21262d;
+    }
+    .gh-open-btn {
+      padding: 5px 14px; font-size: 12px;
+      background: #21262d; color: #e6edf3;
+      border: 1px solid #30363d; cursor: pointer;
+      font-family: var(--font-ui);
+    }
+    .gh-open-btn:hover { background: #30363d; }
+
+    /* ═══════════════════════════════════════════════════════
+       RESUME  (Adobe Acrobat style)
+    ═══════════════════════════════════════════════════════ */
+    #win-resume .title-bar {
+      background: linear-gradient(90deg, #8B0000, #c80000);
+    }
+    .acrobat-bar {
+      flex-shrink: 0;
+      background: #d4d0c8; border-bottom: 1px solid var(--mid);
+      padding: 3px 6px; display: flex; align-items: center; gap: 4px;
+    }
+    .ac-btn {
+      padding: 2px 10px; font-size: 11px;
+      background: var(--silver); border: 1px solid;
+      border-color: var(--white) var(--mid) var(--mid) var(--white);
+      cursor: pointer; font-family: var(--font-ui);
+    }
+    .ac-btn:hover { background: var(--light); }
+    .pdf-area {
       flex: 1; min-height: 0;
-      background: #808080;
-      display: flex; align-items: stretch; justify-content: center;
-      overflow: hidden;
+      background: #5a5a5a;
+      display: flex; align-items: stretch;
     }
-    .pdf-viewport embed { width: 100%; height: 100%; border: none; display: block; }
+    .pdf-area embed { width: 100%; height: 100%; border: none; display: block; }
     .pdf-placeholder {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      color: #fff; font-size: 13px; padding: 24px; text-align: center; gap: 12px;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 12px;
+      color: #ddd; font-size: 13px; padding: 24px; text-align: center;
+      width: 100%;
     }
-    .pdf-placeholder .pdf-icon { font-size: 56px; }
+    .pdf-placeholder .big-icon { font-size: 64px; image-rendering: pixelated; }
+    .dl-btn {
+      padding: 6px 20px; font-size: 12px;
+      background: var(--silver); color: #000;
+      border: 1px solid; border-color: var(--white) var(--mid) var(--mid) var(--white);
+      cursor: pointer; font-family: var(--font-ui); text-decoration: none;
+    }
+    .dl-btn:hover { background: var(--light); }
 
-    /* ── Project cards ────────────────────────────────────── */
+    /* ═══════════════════════════════════════════════════════
+       PROJECT CARDS  (About / Projects)
+    ═══════════════════════════════════════════════════════ */
     .proj-card {
-      background: #fff;
-      border: 1px solid #868686; border-right-color: #000; border-bottom-color: #000;
-      padding: 8px 10px; margin-bottom: 8px;
+      background: #fff; margin-bottom: 10px;
+      border: 1px solid; border-color: var(--mid) var(--white) var(--white) var(--mid);
+      box-shadow: inset -1px -1px 0 var(--mid);
+      padding: 10px 12px;
     }
-    .proj-card h3 { font-weight: bold; font-size: 13px; }
-    .proj-card p  { font-size: 11px; color: #555; margin-top: 2px; }
+    .proj-card h3 { font-weight: bold; font-size: 13px; margin-bottom: 2px; }
+    .proj-card p  { font-size: 11px; color: #555; }
+    .proj-tag {
+      display: inline-block; margin: 3px 2px 0;
+      padding: 1px 6px; font-size: 10px;
+      background: #e8e8e8; border: 1px solid var(--mid);
+    }
 
-    /* ── Contact ──────────────────────────────────────────── */
-    .retro-input {
-      width: 100%; background: #fff;
-      border: 1px solid #000; border-top-color: #868686; border-left-color: #868686;
-      padding: 4px 6px; font-size: 12px; font-family: inherit;
-      outline: none; margin-bottom: 8px; display: block;
+    /* ═══════════════════════════════════════════════════════
+       CONTACT FORM
+    ═══════════════════════════════════════════════════════ */
+    .r-label { font-size: 11px; margin-bottom: 3px; display: block; }
+    .r-input {
+      display: block; width: 100%; margin-bottom: 10px;
+      padding: 4px 6px; font-size: 12px; font-family: var(--font-ui);
+      background: #fff; outline: none;
+      border: 1px solid; border-color: var(--mid) var(--white) var(--white) var(--mid);
+      box-shadow: inset 1px 1px 0 #000;
     }
-    .retro-btn {
-      padding: 4px 16px; background: #c0c0c0;
-      border: 2px solid #fff; border-right-color: #000; border-bottom-color: #000;
-      font-size: 12px; font-family: inherit; cursor: pointer;
+    .r-btn {
+      padding: 5px 18px; font-size: 12px; cursor: pointer;
+      font-family: var(--font-ui); background: var(--silver);
+      border: 1px solid; border-color: var(--white) var(--black) var(--black) var(--white);
+      box-shadow: inset 1px 1px 0 var(--light), inset -1px -1px 0 var(--mid);
     }
-    .retro-btn:hover { background: #dfdfdf; }
-    .retro-btn:active { border-color: #000; border-right-color: #fff; border-bottom-color: #fff; }
+    .r-btn:hover { background: var(--light); }
+    .r-btn:active { border-color: var(--black) var(--white) var(--white) var(--black); }
 
-    /* ── Scramble ─────────────────────────────────────────── */
+    /* ═══════════════════════════════════════════════════════
+       SCRAMBLE
+    ═══════════════════════════════════════════════════════ */
     [data-scramble] { cursor: pointer; display: inline-block; }
 
-    /* ── Taskbar (64 px) ──────────────────────────────────── */
+    /* ═══════════════════════════════════════════════════════
+       TASKBAR  (64 px)
+    ═══════════════════════════════════════════════════════ */
     #taskbar {
       position: fixed; bottom: 0; left: 0; right: 0;
-      height: 64px; background: #c0c0c0;
-      border-top: 2px solid #fff;
+      height: 64px; z-index: 9000;
+      background: var(--silver);
+      border-top: 2px solid var(--white);
+      box-shadow: 0 -1px 0 var(--mid);
       display: flex; align-items: center; gap: 4px; padding: 0 8px;
-      z-index: 9000;
     }
     #start-btn {
-      display: flex; align-items: center; gap: 8px;
+      display: flex; align-items: center; gap: 7px;
       padding: 6px 16px; height: 50px;
-      background: #c0c0c0;
-      border: 2px solid #fff; border-right-color: #000; border-bottom-color: #000;
       font-size: 16px; font-weight: bold; cursor: pointer;
-      flex-shrink: 0; font-family: inherit;
+      font-family: var(--font-ui); background: var(--silver);
+      border: 2px solid; border-color: var(--white) var(--black) var(--black) var(--white);
+      box-shadow: inset 1px 1px 0 var(--light), inset -1px -1px 0 var(--mid);
+      flex-shrink: 0;
     }
-    #start-btn:hover { background: #dfdfdf; }
-    #start-btn.active { border-color: #000; border-right-color: #fff; border-bottom-color: #fff; background: #b0b0b0; }
+    #start-btn:hover { background: var(--light); }
+    #start-btn.pressed {
+      border-color: var(--black) var(--white) var(--white) var(--black);
+      box-shadow: inset 1px 1px 0 var(--mid);
+    }
 
+    /* Quick Launch */
     #quick-launch {
       display: flex; align-items: center; gap: 4px;
       padding: 0 8px; height: 50px;
-      border-left: 2px solid #868686; border-right: 2px solid #fff;
+      border-left: 1px solid var(--mid);
+      border-right: 1px solid var(--white);
       margin-left: 6px;
     }
     .ql-icon {
-      width: 38px; height: 38px;
+      width: 36px; height: 36px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 22px; cursor: pointer; border: 1px solid transparent;
+      font-size: 20px; cursor: pointer;
+      border: 1px solid transparent;
     }
-    .ql-icon:hover { border-color: #fff; border-right-color: #868686; border-bottom-color: #868686; background: #d0d0d0; }
+    .ql-icon:hover {
+      border-color: var(--white) var(--mid) var(--mid) var(--white);
+      background: #d0d0d0;
+    }
 
-    .tb-sep { width: 2px; height: 40px; background: #868686; margin: 0 4px; box-shadow: 1px 0 0 #fff; }
+    .tb-sep {
+      width: 1px; height: 40px; flex-shrink: 0;
+      background: var(--mid); margin: 0 4px;
+      box-shadow: 1px 0 0 var(--white);
+    }
 
-    .clock {
+    /* Clock */
+    #clock {
       margin-left: auto; padding: 6px 12px;
-      border: 1px solid #868686; border-top-color: transparent; border-left-color: transparent;
-      font-size: 15px; text-align: center; line-height: 1.4;
+      font-family: var(--font-ui); font-size: 14px; text-align: center;
+      border: 1px solid; border-color: var(--mid) var(--white) var(--white) var(--mid);
+      box-shadow: inset 1px 1px 0 #000;
+      min-width: 76px;
     }
 
-    /* ── Start Menu ───────────────────────────────────────── */
+    /* ═══════════════════════════════════════════════════════
+       START MENU
+    ═══════════════════════════════════════════════════════ */
     #start-menu {
       position: fixed; bottom: 66px; left: 8px; width: 240px;
-      background: #c0c0c0;
-      border: 2px solid #fff; border-right-color: #000; border-bottom-color: #000;
-      box-shadow: 2px 2px 0 #868686;
+      background: var(--silver);
+      border: 2px solid; border-color: var(--white) var(--black) var(--black) var(--white);
+      box-shadow: 2px 2px 4px rgba(0,0,0,.4);
       z-index: 9500; display: none;
     }
-    #start-menu .sm-header {
-      background: linear-gradient(180deg, #000080, #1084d0);
-      color: #fff; font-weight: bold; font-size: 14px;
-      padding: 12px 10px;
+    .sm-header {
+      background: linear-gradient(180deg, var(--navy) 0%, var(--blue2) 100%);
+      color: #fff; padding: 12px 10px;
       display: flex; align-items: center; gap: 10px;
     }
-    #start-menu .sm-avatar {
-      width: 42px; height: 42px; background: #c0c0c0;
+    .sm-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: #dde; border: 3px solid var(--white);
       display: flex; align-items: center; justify-content: center;
-      font-size: 26px; border: 2px solid #fff; flex-shrink: 0;
+      font-size: 26px; flex-shrink: 0;
     }
+    .sm-user-name { font-size: 14px; font-weight: bold; }
+    .sm-user-sub  { font-size: 10px; opacity: .75; font-weight: normal; }
     .sm-item {
       display: flex; align-items: center; gap: 10px;
       padding: 7px 14px; font-size: 13px; cursor: pointer;
     }
-    .sm-item:hover { background: #000080; color: #fff; }
-    .sm-item .sm-icon { font-size: 18px; width: 22px; text-align: center; }
-    .sm-divider { height: 1px; background: #868686; margin: 2px 0; box-shadow: 0 1px 0 #fff; }
+    .sm-item:hover { background: var(--navy); color: #fff; }
+    .sm-icon { font-size: 18px; width: 22px; text-align: center; }
+    .sm-divider { height: 1px; background: var(--mid); margin: 2px 0; box-shadow: 0 1px 0 var(--white); }
   </style>
 </head>
 <body>
 
 <!-- ══════════════════════════════════════════════════════════
-     PRELOADER
+     PRELOADER  — black · white VT323 counter · curtain up
 ══════════════════════════════════════════════════════════════ -->
-<div id="preloader"><div id="counter">00</div></div>
+<div id="preloader">
+  <div id="counter">00</div>
+</div>
 
 <!-- ══════════════════════════════════════════════════════════
      DESKTOP
 ══════════════════════════════════════════════════════════════ -->
 <div id="desktop">
 
-  <!-- ── Desktop icons ──────────────────────────────────── -->
+  <!-- ── Icons ──────────────────────────────────────────── -->
   <div id="icons">
-    <div class="icon" onclick="openWindow('about')">
-      <div class="icon-img">👤</div><span data-scramble>About.exe</span>
-    </div>
-    <div class="icon" onclick="openWindow('projects')">
-      <div class="icon-img">📁</div><span data-scramble>Projects</span>
-    </div>
-    <div class="icon" onclick="openWindow('contact')">
-      <div class="icon-img">✉️</div><span data-scramble>Contact</span>
-    </div>
-    <div class="icon" onclick="openWindow('social')">
-      <div class="icon-img">🌐</div><span data-scramble>Social Hub</span>
-    </div>
-    <div class="icon" onclick="openWindow('resume')">
-      <div class="icon-img">📄</div><span data-scramble>Resume.pdf</span>
-    </div>
-    <div class="icon" onclick="openLink('https://github.com/parygust')">
-      <div class="icon-img">🐙</div><span data-scramble>GitHub</span>
-    </div>
-    <div class="icon" onclick="openLink('https://www.linkedin.com/in/enes-ba%C5%9F-0955a7237/')">
-      <div class="icon-img">💼</div><span data-scramble>LinkedIn</span>
-    </div>
-    <div class="icon" onclick="openLink('https://parygust.itch.io')">
-      <div class="icon-img">🎮</div><span data-scramble>itch.io</span>
-    </div>
-  </div>
 
-  <!-- ── Window: About ──────────────────────────────────── -->
-  <div class="win" id="win-about" style="top:60px;left:200px;">
+    <div class="icon" tabindex="0" onclick="openWindow('about')">
+      <div class="icon-img">👤</div>
+      <span class="icon-label" data-scramble>About.exe</span>
+    </div>
+
+    <div class="icon" tabindex="0" onclick="openWindow('projects')">
+      <div class="icon-img">📁</div>
+      <span class="icon-label" data-scramble>Projects</span>
+    </div>
+
+    <div class="icon" tabindex="0" onclick="openWindow('social')">
+      <div class="icon-img">🌐</div>
+      <span class="icon-label" data-scramble>Social Hub</span>
+    </div>
+
+    <div class="icon" tabindex="0" onclick="openWindow('resume')">
+      <div class="icon-img">📄</div>
+      <span class="icon-label" data-scramble>Resume.pdf</span>
+    </div>
+
+    <div class="icon" tabindex="0" onclick="openWindow('contact')">
+      <div class="icon-img">✉️</div>
+      <span class="icon-label" data-scramble>Contact</span>
+    </div>
+
+    <div class="icon" tabindex="0" onclick="openLink('https://github.com/parygust')">
+      <div class="icon-img">🐙</div>
+      <span class="icon-label" data-scramble>GitHub</span>
+    </div>
+
+    <div class="icon" tabindex="0" onclick="openLink('https://www.linkedin.com/in/enes-ba%C5%9F-0955a7237/')">
+      <div class="icon-img">💼</div>
+      <span class="icon-label" data-scramble>LinkedIn</span>
+    </div>
+
+    <div class="icon" tabindex="0" onclick="openLink('https://parygust.itch.io')">
+      <div class="icon-img">🎮</div>
+      <span class="icon-label" data-scramble>itch.io</span>
+    </div>
+
+  </div><!-- /icons -->
+
+  <!-- ════════════════════════════════════════════════════
+       WINDOW: About
+  ════════════════════════════════════════════════════════ -->
+  <div class="win" id="win-about" style="top:70px;left:200px;">
     <div class="title-bar" data-win="about">
-      <span class="title-text">About — User Profile</span>
-      <div class="win-btn" onclick="minimizeWindow('about')">_</div>
-      <div class="win-btn" id="max-about" onclick="maximizeWindow('about')">□</div>
-      <div class="win-btn" onclick="closeWindow('about')">✕</div>
+      <span class="title-icon">👤</span>
+      <span class="title-text" data-scramble>About — enes baş</span>
+      <div class="win-btn" onclick="minimizeWin('about')">_</div>
+      <div class="win-btn" id="maxbtn-about" onclick="maximizeWin('about')">□</div>
+      <div class="win-btn" onclick="closeWin('about')">✕</div>
     </div>
     <div class="menu-bar">
-      <span data-scramble>File</span>
-      <span data-scramble>Edit</span>
-      <span data-scramble>Help</span>
+      <span class="menu-item" data-scramble>File</span>
+      <span class="menu-item" data-scramble>Edit</span>
+      <span class="menu-item" data-scramble>Help</span>
     </div>
     <div class="win-content">
-      <div class="win-body">
-        <p style="font-weight:bold;font-size:16px;margin-bottom:6px;">Hello, World. 👋</p>
-        <p>I'm a <strong>creative developer</strong> building immersive digital experiences at the intersection of design and technology.</p>
+      <div class="win-body" style="min-width:300px;">
+        <p style="font-size:16px;font-weight:bold;margin-bottom:8px;">Hello, World. 👋</p>
+        <p>I'm <strong>enes baş</strong> — a <em>software engineering student</em> passionate about AI, Data Science and game development.</p>
         <br/>
-        <p>→ Full-stack web development</p>
-        <p>→ Motion design &amp; GSAP animation</p>
-        <p>→ 3D &amp; WebGL experimentation</p>
+        <p>→ Full-stack &amp; creative web development</p>
+        <p>→ AI / Machine Learning enthusiast</p>
+        <p>→ Indie game developer (itch.io)</p>
+        <p>→ Motion design &amp; interactive 3-D</p>
         <br/>
-        <p style="font-size:11px;color:#666;">System: Portfolio OS v1.0 — Windows Teal Edition</p>
+        <p style="font-size:11px;color:#666;">System: Portfolio OS v2.0 — Windows Teal Edition<br/>All windows draggable &amp; resizable.</p>
       </div>
     </div>
   </div>
 
-  <!-- ── Window: Projects ───────────────────────────────── -->
-  <div class="win" id="win-projects" style="top:100px;left:520px;">
+  <!-- ════════════════════════════════════════════════════
+       WINDOW: Projects
+  ════════════════════════════════════════════════════════ -->
+  <div class="win" id="win-projects" style="top:110px;left:540px;">
     <div class="title-bar" data-win="projects">
-      <span class="title-text">📁 Projects</span>
-      <div class="win-btn" onclick="minimizeWindow('projects')">_</div>
-      <div class="win-btn" id="max-projects" onclick="maximizeWindow('projects')">□</div>
-      <div class="win-btn" onclick="closeWindow('projects')">✕</div>
+      <span class="title-icon">📁</span>
+      <span class="title-text" data-scramble>Projects</span>
+      <div class="win-btn" onclick="minimizeWin('projects')">_</div>
+      <div class="win-btn" id="maxbtn-projects" onclick="maximizeWin('projects')">□</div>
+      <div class="win-btn" onclick="closeWin('projects')">✕</div>
     </div>
     <div class="menu-bar">
-      <span data-scramble>View</span>
-      <span data-scramble>Sort</span>
+      <span class="menu-item" data-scramble>View</span>
+      <span class="menu-item" data-scramble>Sort</span>
     </div>
     <div class="win-content">
       <div class="win-body" style="min-width:300px;">
         <div class="proj-card">
-          <h3 data-scramble>Project Alpha</h3>
-          <p>WebGL generative art — Three.js + GLSL shaders</p>
+          <h3 data-scramble>socks_game</h3>
+          <p>A browser-based game built with custom physics &amp; pixel art.</p>
+          <span class="proj-tag">JavaScript</span><span class="proj-tag">Canvas</span>
         </div>
         <div class="proj-card">
-          <h3 data-scramble>Project Beta</h3>
-          <p>Real-time collaborative whiteboard — Next.js + WebSockets</p>
+          <h3 data-scramble>Fall_lootgamejam</h3>
+          <p>Game jam entry — loot-driven fall season themed platformer.</p>
+          <span class="proj-tag">Game Jam</span><span class="proj-tag">Unity</span>
         </div>
         <div class="proj-card">
-          <h3 data-scramble>Project Gamma</h3>
-          <p>AI-driven music visualizer — Tone.js + React</p>
+          <h3 data-scramble>port</h3>
+          <p>This very portfolio — Windows 95 OS aesthetic, GSAP animations.</p>
+          <span class="proj-tag">HTML</span><span class="proj-tag">GSAP</span><span class="proj-tag">CSS</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── Window: Contact ────────────────────────────────── -->
-  <div class="win" id="win-contact" style="top:180px;left:840px;">
+  <!-- ════════════════════════════════════════════════════
+       WINDOW: Contact
+  ════════════════════════════════════════════════════════ -->
+  <div class="win" id="win-contact" style="top:190px;left:860px;display:none;">
     <div class="title-bar" data-win="contact">
-      <span class="title-text">✉ Contact</span>
-      <div class="win-btn" onclick="minimizeWindow('contact')">_</div>
-      <div class="win-btn" id="max-contact" onclick="maximizeWindow('contact')">□</div>
-      <div class="win-btn" onclick="closeWindow('contact')">✕</div>
+      <span class="title-icon">✉️</span>
+      <span class="title-text" data-scramble>Contact</span>
+      <div class="win-btn" onclick="minimizeWin('contact')">_</div>
+      <div class="win-btn" id="maxbtn-contact" onclick="maximizeWin('contact')">□</div>
+      <div class="win-btn" onclick="closeWin('contact')">✕</div>
     </div>
     <div class="menu-bar">
-      <span data-scramble>Send</span>
-      <span data-scramble>Options</span>
+      <span class="menu-item" data-scramble>Send</span>
+      <span class="menu-item" data-scramble>Options</span>
     </div>
     <div class="win-content">
       <div class="win-body" style="min-width:280px;">
-        <label style="font-size:11px;">Name:</label>
-        <input class="retro-input" type="text" placeholder="Your Name" />
-        <label style="font-size:11px;">Email:</label>
-        <input class="retro-input" type="email" placeholder="you@example.com" />
-        <label style="font-size:11px;">Message:</label>
-        <textarea class="retro-input" rows="3" placeholder="Say hello..."></textarea>
-        <button class="retro-btn" data-scramble>Send Message</button>
+        <label class="r-label">Name:</label>
+        <input class="r-input" type="text" placeholder="Your Name" />
+        <label class="r-label">Email:</label>
+        <input class="r-input" type="email" placeholder="you@example.com" />
+        <label class="r-label">Message:</label>
+        <textarea class="r-input" rows="4" placeholder="Say hello…"></textarea>
+        <button class="r-btn" data-scramble>✉ Send Message</button>
       </div>
     </div>
   </div>
 
-  <!-- ── Window: Social Hub ─────────────────────────────── -->
-  <!-- Tab order: LinkedIn → itch.io → GitHub -->
-  <div class="win" id="win-social" style="top:60px;left:380px;display:none;width:480px;height:560px;">
+  <!-- ════════════════════════════════════════════════════
+       WINDOW: Social Hub
+       Tab order: LinkedIn | itch.io | GitHub
+  ════════════════════════════════════════════════════════ -->
+  <div class="win" id="win-social" style="top:60px;left:350px;width:500px;height:580px;display:none;">
     <div class="title-bar" data-win="social">
-      <span class="title-text">🌐 Connect / Social Feed</span>
-      <div class="win-btn" onclick="minimizeWindow('social')">_</div>
-      <div class="win-btn" id="max-social" onclick="maximizeWindow('social')">□</div>
-      <div class="win-btn" onclick="closeWindow('social')">✕</div>
+      <span class="title-icon">🌐</span>
+      <span class="title-text" data-scramble>Social Hub</span>
+      <div class="win-btn" onclick="minimizeWin('social')">_</div>
+      <div class="win-btn" id="maxbtn-social" onclick="maximizeWin('social')">□</div>
+      <div class="win-btn" onclick="closeWin('social')">✕</div>
     </div>
+
     <div class="tab-bar" id="social-tabs">
       <button class="tab-btn active" onclick="switchTab('li')"   data-scramble>LinkedIn</button>
       <button class="tab-btn"        onclick="switchTab('itch')" data-scramble>itch.io</button>
       <button class="tab-btn"        onclick="switchTab('gh')"   data-scramble>GitHub</button>
     </div>
+
     <div class="win-content">
 
-      <!-- ─ LinkedIn panel ─ -->
+      <!-- ── Tab: LinkedIn ─────────────────────────────── -->
       <div class="tab-panel active" id="tab-li">
-        <div class="social-card">
-          <div class="li-banner"></div>
-          <div class="li-avatar-wrap">
+        <!-- Profile card -->
+        <div style="background:#fff;border-bottom:1px solid #ddd;">
+          <div class="li-banner"><div class="li-banner-pattern"></div></div>
+          <div class="li-avatar-row">
             <div class="li-avatar">👤</div>
-            <div style="padding-top:30px;">
-              <div class="li-name">Enes Baş</div>
-              <div class="li-title">Creative Developer &amp; Designer</div>
+            <div class="li-name-block">
+              <div class="li-name">enes baş</div>
+              <div class="li-headline">Software Engineering Student | AI, Data Science &amp; Game Developer</div>
             </div>
           </div>
-          <div class="social-card-inner" style="padding-top:0;">
-            <a class="social-link"
-               href="https://www.linkedin.com/in/enes-ba%C5%9F-0955a7237/"
-               target="_blank" rel="noopener noreferrer" data-scramble>Open LinkedIn ↗</a>
+          <div style="padding:0 16px 12px;display:flex;gap:8px;align-items:center;">
+            <button class="li-open-btn"
+              onclick="openLink('https://www.linkedin.com/in/enes-ba%C5%9F-0955a7237/')"
+              data-scramble>Open LinkedIn ↗</button>
           </div>
         </div>
+
         <div class="li-section">
-          <h4>About</h4>
+          <div class="li-section-title">About</div>
           <p style="font-size:12px;color:#333;line-height:1.6;">
-            Creative developer at the crossroads of design and code. Passionate about immersive web experiences, motion graphics, and interactive storytelling.
+            Passionate about building intelligent systems and interactive experiences.
+            Combining software engineering foundations with AI research and indie game development.
           </p>
         </div>
-        <div class="li-section">
-          <h4>Experience</h4>
-          <div class="li-exp-item">
-            <div class="li-exp-icon">🏢</div>
-            <div>
-              <div class="li-exp-title">Creative Developer</div>
-              <div class="li-exp-sub">Freelance · 2022 – Present</div>
-            </div>
-          </div>
-          <div class="li-exp-item">
-            <div class="li-exp-icon">🎓</div>
-            <div>
-              <div class="li-exp-title">Computer Engineering</div>
-              <div class="li-exp-sub">University · 2020 – 2024</div>
-            </div>
-          </div>
-        </div>
-        <div class="li-section">
-          <h4>Skills</h4>
-          <div>
-            <span class="skill-tag">JavaScript</span>
-            <span class="skill-tag">GSAP</span>
-            <span class="skill-tag">Three.js</span>
-            <span class="skill-tag">React</span>
-            <span class="skill-tag">Next.js</span>
-            <span class="skill-tag">WebGL</span>
-            <span class="skill-tag">UI Design</span>
-            <span class="skill-tag">Motion</span>
-          </div>
-        </div>
-      </div>
 
-      <!-- ─ itch.io panel (gallery) ─ -->
+        <div class="li-section">
+          <div class="li-section-title">Experience &amp; Education</div>
+          <div class="li-row">
+            <div class="li-row-icon">🎓</div>
+            <div class="li-row-body">
+              <div class="li-row-title">Software Engineering Student</div>
+              <div class="li-row-sub">University · 2021 – Present</div>
+            </div>
+          </div>
+          <div class="li-row">
+            <div class="li-row-icon">🎮</div>
+            <div class="li-row-body">
+              <div class="li-row-title">Indie Game Developer</div>
+              <div class="li-row-sub">itch.io — parygust · 2022 – Present</div>
+            </div>
+          </div>
+          <div class="li-row">
+            <div class="li-row-icon">💻</div>
+            <div class="li-row-body">
+              <div class="li-row-title">Creative Developer</div>
+              <div class="li-row-sub">Freelance · 2023 – Present</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="li-section">
+          <div class="li-section-title">Skills</div>
+          <span class="skill-chip">Python</span>
+          <span class="skill-chip">JavaScript</span>
+          <span class="skill-chip">Machine Learning</span>
+          <span class="skill-chip">Data Science</span>
+          <span class="skill-chip">Unity</span>
+          <span class="skill-chip">GSAP</span>
+          <span class="skill-chip">Three.js</span>
+          <span class="skill-chip">React</span>
+        </div>
+      </div><!-- /tab-li -->
+
+      <!-- ── Tab: itch.io  Game Library ────────────────── -->
       <div class="tab-panel" id="tab-itch">
-        <div class="social-card" style="margin-bottom:0;border-bottom:none;">
-          <div class="itch-header">
-            <h3>🎮 parygust — itch.io</h3>
-            <p>Indie games, jam entries &amp; interactive experiments</p>
-          </div>
-          <div class="game-grid">
-
-            <div class="game-card" onclick="openLink('https://parygust.itch.io')">
-              <div class="game-thumb">🕹️</div>
-              <div class="game-info">
-                <div class="game-title" data-scramble>Jam Entry #1</div>
-                <div class="game-desc">A fast-paced puzzle platformer built in 72 hours.</div>
-                <div class="game-tags">
-                  <span class="game-tag jam">Game Jam</span>
-                  <span class="game-tag">Puzzle</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="game-card" onclick="openLink('https://parygust.itch.io')">
-              <div class="game-thumb">👾</div>
-              <div class="game-info">
-                <div class="game-title" data-scramble>Jam Entry #2</div>
-                <div class="game-desc">Retro-style shooter with procedural level generation.</div>
-                <div class="game-tags">
-                  <span class="game-tag jam">Game Jam</span>
-                  <span class="game-tag">Shooter</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="game-card" onclick="openLink('https://parygust.itch.io')">
-              <div class="game-thumb">🌌</div>
-              <div class="game-info">
-                <div class="game-title" data-scramble>Void Walker</div>
-                <div class="game-desc">Atmospheric exploration in a dark, generative universe.</div>
-                <div class="game-tags">
-                  <span class="game-tag">Exploration</span>
-                  <span class="game-tag">WebGL</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="game-card" onclick="openLink('https://parygust.itch.io')">
-              <div class="game-thumb">🔮</div>
-              <div class="game-info">
-                <div class="game-title" data-scramble>Prototype X</div>
-                <div class="game-desc">Experimental narrative with dynamic branching choices.</div>
-                <div class="game-tags">
-                  <span class="game-tag">Narrative</span>
-                  <span class="game-tag">Prototype</span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-          <div class="itch-footer">
-            <p>Update cards with your real game titles &amp; links.</p>
-            <a class="social-link" style="background:#fa5c5c;color:#fff;border-color:#fa5c5c;"
-               href="https://parygust.itch.io" target="_blank" rel="noopener noreferrer" data-scramble>
-               View All ↗
-            </a>
+        <div class="itch-header">
+          <div class="itch-logo">🎮</div>
+          <div>
+            <div class="itch-title">parygust — Game Library</div>
+            <div class="itch-sub">parygust.itch.io</div>
           </div>
         </div>
-      </div>
+        <div class="game-list">
 
-      <!-- ─ GitHub panel ─ -->
+          <div class="game-card" onclick="openLink('https://parygust.itch.io/let-the-sky-fall')">
+            <div class="game-thumb thumb-sky">🌌<br/>🌠</div>
+            <div class="game-info">
+              <div class="game-title" data-scramble>Let the Sky Fall</div>
+              <div class="game-red-tag">Action · Platformer</div>
+              <div class="game-tags">
+                <span class="game-tag">Pixel Art</span>
+                <span class="game-tag">Game Jam</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="game-card" onclick="openLink('https://parygust.itch.io/general-game-objects')">
+            <div class="game-thumb thumb-objects">🧩</div>
+            <div class="game-info">
+              <div class="game-title" data-scramble>general game objects</div>
+              <div class="game-red-tag">Tool · Library</div>
+              <div class="game-tags">
+                <span class="game-tag">Utility</span>
+                <span class="game-tag">Open Source</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="game-card" onclick="openLink('https://parygust.itch.io/vampire-survivors-try')">
+            <div class="game-thumb thumb-vampire">🧛</div>
+            <div class="game-info">
+              <div class="game-title" data-scramble>vampire survivors try</div>
+              <div class="game-red-tag">Roguelite · Survival</div>
+              <div class="game-tags">
+                <span class="game-tag">Pixel Art</span>
+                <span class="game-tag">Prototype</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="itch-footer">
+          <span class="itch-footer-text">3 projects · parygust.itch.io</span>
+          <button class="itch-visit-btn" onclick="openLink('https://parygust.itch.io')" data-scramble>
+            View All ↗
+          </button>
+        </div>
+      </div><!-- /tab-itch -->
+
+      <!-- ── Tab: GitHub ────────────────────────────────── -->
       <div class="tab-panel" id="tab-gh">
-        <div class="social-card" style="margin-bottom:0;border-bottom:none;">
-          <div class="gh-header">
-            <div class="gh-avatar">🐙</div>
-            <div>
-              <div class="gh-name">parygust</div>
-              <div class="gh-sub">github.com/parygust</div>
-            </div>
-          </div>
-          <div class="gh-stats">
-            <div class="gh-stat"><div class="gh-stat-n" id="gh-repos">—</div><div class="gh-stat-l">Repos</div></div>
-            <div class="gh-stat"><div class="gh-stat-n" id="gh-followers">—</div><div class="gh-stat-l">Followers</div></div>
-            <div class="gh-stat"><div class="gh-stat-n" id="gh-following">—</div><div class="gh-stat-l">Following</div></div>
-          </div>
-          <div class="gh-chart-wrap">
-            <img id="gh-chart-img"
-                 src="https://ghchart.rshah.org/parygust"
-                 alt="GitHub contribution chart"
-                 style="max-width:100%;display:block;"
-                 onerror="this.style.display='none';document.getElementById('gh-chart-err').style.display='block';" />
-            <p id="gh-chart-err" class="gh-chart-fallback" style="display:none;">
-              Contribution chart — open profile to view live data.
-            </p>
-          </div>
-          <div class="gh-footer">
-            <a class="social-link" style="background:#21262d;color:#e6edf3;border-color:#30363d;"
-               href="https://github.com/parygust" target="_blank" rel="noopener noreferrer" data-scramble>
-               Open GitHub ↗
-            </a>
+        <div class="gh-profile">
+          <div class="gh-avatar">🐙</div>
+          <div>
+            <div class="gh-name">parygust</div>
+            <div class="gh-sub">github.com/parygust</div>
           </div>
         </div>
-      </div>
+        <div class="gh-stats-bar">
+          <div class="gh-stat"><div class="gh-stat-n" id="gh-repos">—</div><div class="gh-stat-l">Repos</div></div>
+          <div class="gh-stat"><div class="gh-stat-n" id="gh-stars">—</div><div class="gh-stat-l">Stars</div></div>
+          <div class="gh-stat"><div class="gh-stat-n" id="gh-followers">—</div><div class="gh-stat-l">Followers</div></div>
+        </div>
+
+        <div class="gh-section-title">Popular repositories</div>
+
+        <div class="gh-repo" onclick="openLink('https://github.com/parygust/socks_game')">
+          <div>
+            <div class="gh-repo-name" data-scramble>socks_game</div>
+            <div class="gh-repo-desc">Browser-based game with custom physics &amp; pixel art</div>
+          </div>
+          <div class="gh-repo-lang"><span class="lang-dot" style="background:#f1e05a;"></span>JavaScript</div>
+        </div>
+
+        <div class="gh-repo" onclick="openLink('https://github.com/parygust/Fall_lootgamejam')">
+          <div>
+            <div class="gh-repo-name" data-scramble>Fall_lootgamejam</div>
+            <div class="gh-repo-desc">Game jam entry — loot-driven fall-season platformer</div>
+          </div>
+          <div class="gh-repo-lang"><span class="lang-dot" style="background:#178600;"></span>C#</div>
+        </div>
+
+        <div class="gh-repo" onclick="openLink('https://github.com/parygust/port')">
+          <div>
+            <div class="gh-repo-name" data-scramble>port</div>
+            <div class="gh-repo-desc">This portfolio — Win95 OS aesthetic with GSAP</div>
+          </div>
+          <div class="gh-repo-lang"><span class="lang-dot" style="background:#e34c26;"></span>HTML</div>
+        </div>
+
+        <div class="gh-heatmap-wrap">
+          <div class="gh-heatmap-label">Contribution activity (past year)</div>
+          <div id="gh-heatmap"></div>
+        </div>
+
+        <div class="gh-footer">
+          <button class="gh-open-btn" onclick="openLink('https://github.com/parygust')" data-scramble>
+            Open GitHub Profile ↗
+          </button>
+        </div>
+      </div><!-- /tab-gh -->
 
     </div><!-- /win-content -->
-  </div>
+  </div><!-- /win-social -->
 
-  <!-- ── Window: Resume (Adobe Acrobat style) ───────────── -->
+  <!-- ════════════════════════════════════════════════════
+       WINDOW: Resume (Adobe Acrobat 1.0)
+  ════════════════════════════════════════════════════════ -->
   <div class="win" id="win-resume" style="top:60px;left:300px;width:800px;height:600px;display:none;">
     <div class="title-bar" data-win="resume">
-      <span class="title-text">Adobe Acrobat Reader — Resume.pdf</span>
-      <div class="win-btn" onclick="minimizeWindow('resume')">_</div>
-      <div class="win-btn" id="max-resume" onclick="maximizeWindow('resume')">□</div>
-      <div class="win-btn" onclick="closeWindow('resume')">✕</div>
+      <span class="title-icon">📄</span>
+      <span class="title-text" data-scramble>Adobe Acrobat Reader — Resume.pdf</span>
+      <div class="win-btn" onclick="minimizeWin('resume')">_</div>
+      <div class="win-btn" id="maxbtn-resume" onclick="maximizeWin('resume')">□</div>
+      <div class="win-btn" onclick="closeWin('resume')">✕</div>
     </div>
     <div class="menu-bar">
-      <span data-scramble>File</span>
-      <span data-scramble>Edit</span>
-      <span data-scramble>View</span>
-      <span data-scramble>Tools</span>
-      <span data-scramble>Help</span>
+      <span class="menu-item" data-scramble>File</span>
+      <span class="menu-item" data-scramble>Edit</span>
+      <span class="menu-item" data-scramble>View</span>
+      <span class="menu-item" data-scramble>Tools</span>
     </div>
-    <div class="acrobat-toolbar">
-      <button class="tb-btn" data-scramble>◀ Prev</button>
-      <button class="tb-btn" data-scramble>Next ▶</button>
-      <span style="font-size:11px;margin:0 6px;">Page 1 of 1</span>
-      <button class="tb-btn" data-scramble>Zoom −</button>
-      <button class="tb-btn" data-scramble>Zoom +</button>
-      <button class="tb-btn" onclick="window.open('resume.pdf','_blank')" data-scramble>⬇ Download</button>
+    <div class="acrobat-bar">
+      <button class="ac-btn" data-scramble>◀ Prev</button>
+      <button class="ac-btn" data-scramble>Next ▶</button>
+      <span style="font-size:11px;margin:0 8px;color:#555;">Page 1 / 1</span>
+      <button class="ac-btn" data-scramble>Zoom −</button>
+      <button class="ac-btn" data-scramble>Zoom +</button>
+      <span style="flex:1;"></span>
+      <button class="ac-btn" onclick="window.open('resume.pdf','_blank')" data-scramble>⬇ Download</button>
     </div>
-    <div class="pdf-viewport" id="pdf-viewport">
+    <div class="pdf-area" id="pdf-area">
       <embed id="pdf-embed" src="resume.pdf" type="application/pdf" width="100%" height="100%" />
     </div>
   </div>
@@ -703,37 +1004,37 @@
   <div class="sm-header">
     <div class="sm-avatar">👤</div>
     <div>
-      <div style="font-size:15px;">Portfolio OS</div>
-      <div style="font-size:11px;opacity:.8;font-weight:normal;">parygust</div>
+      <div class="sm-user-name">enes baş</div>
+      <div class="sm-user-sub">Portfolio OS v2.0</div>
     </div>
   </div>
-  <div class="sm-item" onclick="openWindow('about');closeStartMenu()">
+  <div class="sm-item" onclick="openWindow('about');closeMenu()">
     <span class="sm-icon">👤</span><span data-scramble>About Me</span>
   </div>
-  <div class="sm-item" onclick="openWindow('projects');closeStartMenu()">
+  <div class="sm-item" onclick="openWindow('projects');closeMenu()">
     <span class="sm-icon">📁</span><span data-scramble>Projects</span>
   </div>
-  <div class="sm-item" onclick="openWindow('contact');closeStartMenu()">
-    <span class="sm-icon">✉️</span><span data-scramble>Contact</span>
-  </div>
-  <div class="sm-item" onclick="openWindow('social');closeStartMenu()">
+  <div class="sm-item" onclick="openWindow('social');closeMenu()">
     <span class="sm-icon">🌐</span><span data-scramble>Social Hub</span>
   </div>
-  <div class="sm-divider"></div>
-  <div class="sm-item" onclick="openWindow('resume');closeStartMenu()">
+  <div class="sm-item" onclick="openWindow('resume');closeMenu()">
     <span class="sm-icon">📄</span><span data-scramble>Resume.pdf</span>
   </div>
-  <div class="sm-item" onclick="openLink('https://github.com/parygust');closeStartMenu()">
+  <div class="sm-item" onclick="openWindow('contact');closeMenu()">
+    <span class="sm-icon">✉️</span><span data-scramble>Contact</span>
+  </div>
+  <div class="sm-divider"></div>
+  <div class="sm-item" onclick="openLink('https://github.com/parygust');closeMenu()">
     <span class="sm-icon">🐙</span><span data-scramble>GitHub</span>
   </div>
-  <div class="sm-item" onclick="openLink('https://www.linkedin.com/in/enes-ba%C5%9F-0955a7237/');closeStartMenu()">
+  <div class="sm-item" onclick="openLink('https://www.linkedin.com/in/enes-ba%C5%9F-0955a7237/');closeMenu()">
     <span class="sm-icon">💼</span><span data-scramble>LinkedIn</span>
   </div>
-  <div class="sm-item" onclick="openLink('https://parygust.itch.io');closeStartMenu()">
+  <div class="sm-item" onclick="openLink('https://parygust.itch.io');closeMenu()">
     <span class="sm-icon">🎮</span><span data-scramble>itch.io</span>
   </div>
   <div class="sm-divider"></div>
-  <div class="sm-item" onclick="closeStartMenu()">
+  <div class="sm-item" onclick="closeMenu()">
     <span class="sm-icon">⏻</span><span data-scramble>Shut Down…</span>
   </div>
 </div>
@@ -742,53 +1043,68 @@
      TASKBAR
 ══════════════════════════════════════════════════════════════ -->
 <div id="taskbar">
-  <button id="start-btn" onclick="toggleStartMenu()">⊞ Start</button>
+  <button id="start-btn" onclick="toggleMenu()">
+    <span style="font-size:20px;">⊞</span> Start
+  </button>
+
   <div id="quick-launch">
-    <div class="ql-icon" title="About"    onclick="openWindow('about')"    data-scramble>👤</div>
-    <div class="ql-icon" title="Projects" onclick="openWindow('projects')" data-scramble>📁</div>
-    <div class="ql-icon" title="Social"   onclick="openWindow('social')"   data-scramble>🌐</div>
-    <div class="ql-icon" title="Resume"   onclick="openWindow('resume')"   data-scramble>📄</div>
+    <div class="ql-icon" title="About"      onclick="openWindow('about')"    data-scramble>👤</div>
+    <div class="ql-icon" title="Projects"   onclick="openWindow('projects')" data-scramble>📁</div>
+    <div class="ql-icon" title="Social Hub" onclick="openWindow('social')"   data-scramble>🌐</div>
+    <div class="ql-icon" title="Resume"     onclick="openWindow('resume')"   data-scramble>📄</div>
   </div>
+
   <div class="tb-sep"></div>
-  <div class="clock" id="clock">00:00</div>
+  <div id="clock">00:00:00</div>
 </div>
 
 <!-- ══════════════════════════════════════════════════════════
-     SCRIPTS
+     SCRIPT
 ══════════════════════════════════════════════════════════════ -->
 <script>
-/* ── Utility ──────────────────────────────────────────────── */
+'use strict';
+/* ── tiny $ helper ──────────────────────────────────────── */
 const $ = id => document.getElementById(id);
 
-/* ── Clock ────────────────────────────────────────────────── */
-function updateClock() {
-  const d = new Date();
-  $('clock').textContent = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+/* ══════════════════════════════════════════════════════════
+   CLOCK  — every second
+══════════════════════════════════════════════════════════ */
+function tick() {
+  $('clock').textContent = new Date().toLocaleTimeString([], {
+    hour: '2-digit', minute: '2-digit', second: '2-digit'
+  });
 }
-updateClock();
-setInterval(updateClock, 10000);
+tick();
+setInterval(tick, 1000);
 
-/* ── Preloader ────────────────────────────────────────────── */
-(function () {
+/* ══════════════════════════════════════════════════════════
+   PRELOADER  — black · curtain slide up
+══════════════════════════════════════════════════════════ */
+(function runPreloader() {
   const el = $('counter');
-  let current = 0, resolved = false;
+  let cur = 0, done = false;
 
-  function animateTo(target, onDone) {
-    gsap.to({ val: current }, {
-      val: target,
-      duration: (target - current) * 0.012,
+  function animTo(target, cb) {
+    gsap.to({ v: cur }, {
+      v: target,
+      duration: (target - cur) * 0.011,
       ease: 'power1.inOut',
-      onUpdate() { current = Math.round(this.targets()[0].val); el.textContent = String(current).padStart(2,'0'); },
-      onComplete: onDone
+      onUpdate() {
+        cur = Math.round(this.targets()[0].v);
+        el.textContent = String(cur).padStart(2, '0');
+      },
+      onComplete: cb
     });
   }
 
-  animateTo(70, () => {
+  animTo(70, () => {
     function finish() {
-      if (resolved) return; resolved = true;
-      animateTo(100, () => {
-        gsap.to($('preloader'), { yPercent: -100, duration: 1.1, ease: 'expo.inOut',
-          onComplete: () => $('preloader').remove() });
+      if (done) return; done = true;
+      animTo(100, () => {
+        gsap.to($('preloader'), {
+          yPercent: -100, duration: 1.2, ease: 'expo.inOut',
+          onComplete: () => $('preloader').remove()
+        });
       });
     }
     if (document.readyState === 'complete') finish();
@@ -796,111 +1112,104 @@ setInterval(updateClock, 10000);
   });
 })();
 
-/* ════════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════
    WINDOW SYSTEM
-════════════════════════════════════════════════════════════ */
-let zCounter = 10;
-const winState = {};  // keyed by window id — stores maximize state
+══════════════════════════════════════════════════════════ */
+let Z = 10;
+const winStates = {}; // per-window maximize state
 
-/* ── Z-index / focus ──────────────────────────────────────── */
-function bringToFront(id) {
+function bringFront(id) {
   document.querySelectorAll('.win').forEach(w => w.classList.remove('active'));
   const w = $('win-' + id);
-  if (w) { w.style.zIndex = ++zCounter; w.classList.add('active'); }
+  if (w) { w.style.zIndex = ++Z; w.classList.add('active'); }
 }
 
-/* ── Open / Close / Minimize ─────────────────────────────── */
 function openWindow(id) {
   const w = $('win-' + id);
   if (!w) return;
-  w.style.display = 'flex'; // keep flex layout
-  bringToFront(id);
-  gsap.fromTo(w, { scale: 0.88, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.22, ease: 'back.out(1.4)' });
+  w.style.display = 'flex';
+  bringFront(id);
+  gsap.fromTo(w,
+    { scale: 0.86, opacity: 0 },
+    { scale: 1, opacity: 1, duration: 0.22, ease: 'back.out(1.5)' }
+  );
+  bindScramble(w);
 }
 
-function closeWindow(id) {
+function closeWin(id) {
   const w = $('win-' + id);
   if (!w) return;
-  // Exit maximized state cleanly before closing
-  if (winState[id]?.maximized) { winState[id].maximized = false; gsap.killTweensOf(w); }
-  gsap.to(w, { scale: 0.88, opacity: 0, duration: 0.16, ease: 'power2.in',
-    onComplete: () => { w.style.display = 'none'; gsap.set(w, { scale: 1, opacity: 1 }); } });
+  if (winStates[id]?.max) { winStates[id].max = false; }
+  gsap.to(w, {
+    scale: 0.86, opacity: 0, duration: 0.16, ease: 'power2.in',
+    onComplete() { w.style.display = 'none'; gsap.set(w, { scale: 1, opacity: 1 }); }
+  });
 }
 
-function minimizeWindow(id) {
+function minimizeWin(id) {
   const w = $('win-' + id);
   if (!w) return;
-  gsap.to(w, { y: '+=60', opacity: 0, duration: 0.18, ease: 'power2.in',
-    onComplete: () => { w.style.display = 'none'; gsap.set(w, { y: 0, opacity: 1 }); } });
+  gsap.to(w, {
+    y: '+=64', opacity: 0, duration: 0.18, ease: 'power2.in',
+    onComplete() { w.style.display = 'none'; gsap.set(w, { y: 0, opacity: 1 }); }
+  });
 }
 
-/* ── Maximize / Restore ───────────────────────────────────── */
-function maximizeWindow(id) {
+/* ── Maximize / Restore ─────────────────────────────────── */
+function maximizeWin(id) {
   const w = $('win-' + id);
   if (!w) return;
-  const st = winState[id] || (winState[id] = { maximized: false });
-  const btn = $('max-' + id);
-  const TASKBAR_H = 64;
+  const st  = winStates[id] || (winStates[id] = { max: false });
+  const btn = $('maxbtn-' + id);
+  const TB  = 64; // taskbar height
 
-  if (!st.maximized) {
-    // ─── Save pre-maximize state ───────────────────────────
-    st.preTop    = w.style.top;
-    st.preLeft   = w.style.left;
-    st.preWidth  = w.style.width  || '';
-    st.preHeight = w.style.height || '';
-    st.preX      = parseFloat(w.getAttribute('data-x')) || 0;
-    st.preY      = parseFloat(w.getAttribute('data-y')) || 0;
-    st.maximized = true;
+  if (!st.max) {
+    // save current state
+    st.top = w.style.top;   st.left  = w.style.left;
+    st.w   = w.style.width; st.h     = w.style.height;
+    st.dx  = parseFloat(w.getAttribute('data-x')) || 0;
+    st.dy  = parseFloat(w.getAttribute('data-y')) || 0;
+    st.max = true;
     if (btn) btn.textContent = '❐';
 
-    // Clear drag transform so position is purely top/left
     gsap.set(w, { x: 0, y: 0 });
-    w.setAttribute('data-x', 0);
-    w.setAttribute('data-y', 0);
+    w.setAttribute('data-x', 0); w.setAttribute('data-y', 0);
 
     gsap.to(w, {
       top: 0, left: 0,
-      width: window.innerWidth,
-      height: window.innerHeight - TASKBAR_H,
+      width:  window.innerWidth,
+      height: window.innerHeight - TB,
       duration: 0.32, ease: 'power3.inOut'
     });
-
   } else {
-    // ─── Restore ──────────────────────────────────────────
-    st.maximized = false;
+    st.max = false;
     if (btn) btn.textContent = '□';
 
     gsap.to(w, {
-      top:    st.preTop  || 60,
-      left:   st.preLeft || 200,
-      width:  st.preWidth  || '',
-      height: st.preHeight || '',
+      top:  st.top  || 70,  left: st.left || 200,
+      width: st.w  || '',   height: st.h  || '',
       duration: 0.28, ease: 'power3.inOut',
       onComplete() {
-        // Restore the drag transform offset
-        gsap.set(w, { x: st.preX, y: st.preY });
-        w.setAttribute('data-x', st.preX);
-        w.setAttribute('data-y', st.preY);
-        // Remove GSAP's inline width/height if they were '' (auto)
-        if (!st.preWidth)  w.style.width  = '';
-        if (!st.preHeight) w.style.height = '';
+        if (!st.w) w.style.width  = '';
+        if (!st.h) w.style.height = '';
+        gsap.set(w, { x: st.dx, y: st.dy });
+        w.setAttribute('data-x', st.dx); w.setAttribute('data-y', st.dy);
       }
     });
   }
 }
 
-/* ── interact.js: Drag + Resize on all .win ──────────────── */
-function initWindowInteract(el) {
+/* ── interact.js: Drag + Resize + Cursor ────────────────── */
+function initWin(el) {
   const id = el.id.replace('win-', '');
 
   interact(el)
-    /* ── Drag via title bar ────────────────────────────── */
     .draggable({
       allowFrom: '.title-bar',
       listeners: {
-        start() { bringToFront(id); },
+        start() { bringFront(id); },
         move(e) {
-          if (winState[id]?.maximized) return; // locked while maximized
+          if (winStates[id]?.max) return;
           const x = (parseFloat(el.getAttribute('data-x')) || 0) + e.dx;
           const y = (parseFloat(el.getAttribute('data-y')) || 0) + e.dy;
           gsap.set(el, { x, y });
@@ -909,18 +1218,16 @@ function initWindowInteract(el) {
         }
       }
     })
-    /* ── Resize from all edges / corners ──────────────── */
     .resizable({
       edges: { left: true, right: true, bottom: true, top: true },
       margin: 8,
       listeners: {
         move(e) {
-          if (winState[id]?.maximized) return; // locked while maximized
+          if (winStates[id]?.max) return;
           let x = parseFloat(el.getAttribute('data-x')) || 0;
           let y = parseFloat(el.getAttribute('data-y')) || 0;
           el.style.width  = e.rect.width  + 'px';
           el.style.height = e.rect.height + 'px';
-          // Compensate position when dragging top or left edge
           x += e.deltaRect.left;
           y += e.deltaRect.top;
           gsap.set(el, { x, y });
@@ -929,208 +1236,231 @@ function initWindowInteract(el) {
         }
       },
       modifiers: [
-        interact.modifiers.restrictSize({ min: { width: 320, height: 180 } })
+        interact.modifiers.restrictSize({ min: { width: 320, height: 200 } })
       ]
     });
 
-  /* ── Resize cursor feedback on hover ─────────────────── */
+  /* Resize cursor feedback */
   el.addEventListener('mousemove', e => {
-    if (winState[id]?.maximized) { el.style.cursor = 'default'; return; }
-    // Don't override cursor on title-bar (cursor:move) or buttons
-    if (e.target.closest('.title-bar') || e.target.classList.contains('win-btn')) return;
-
+    if (winStates[id]?.max) { el.style.cursor = 'default'; return; }
+    if (e.target.closest('.title-bar,.win-btn')) return;
     const r = el.getBoundingClientRect(), M = 8;
-    const atL = e.clientX - r.left  < M, atR = r.right  - e.clientX < M;
-    const atT = e.clientY - r.top   < M, atB = r.bottom - e.clientY < M;
-
-    if      ((atL && atT) || (atR && atB)) el.style.cursor = 'nwse-resize';
-    else if ((atR && atT) || (atL && atB)) el.style.cursor = 'nesw-resize';
-    else if (atL || atR)                   el.style.cursor = 'ew-resize';
-    else if (atT || atB)                   el.style.cursor = 'ns-resize';
-    else                                   el.style.cursor = 'default';
+    const l = e.clientX - r.left < M, r2 = r.right  - e.clientX < M;
+    const t = e.clientY - r.top  < M, b  = r.bottom - e.clientY < M;
+    if      ((l && t)||(r2 && b)) el.style.cursor = 'nwse-resize';
+    else if ((r2 && t)||(l && b)) el.style.cursor = 'nesw-resize';
+    else if (l || r2)             el.style.cursor = 'ew-resize';
+    else if (t || b)              el.style.cursor = 'ns-resize';
+    else                          el.style.cursor = 'default';
   });
   el.addEventListener('mouseleave', () => { el.style.cursor = 'default'; });
 
-  /* ── Bring to front on any mousedown ─────────────────── */
-  el.addEventListener('mousedown', () => bringToFront(id));
+  /* Bring to front on any click */
+  el.addEventListener('mousedown', () => bringFront(id));
 }
 
 // Init all existing windows
-document.querySelectorAll('.win').forEach(initWindowInteract);
+document.querySelectorAll('.win').forEach(initWin);
 
-// Initial focus stack
-['about', 'projects', 'contact'].forEach(id => bringToFront(id));
+// Initial focus order
+['about', 'projects'].forEach(id => bringFront(id));
 
-/* ── Resume PDF: handle embed errors ─────────────────────── */
+/* ── PDF fallback (if resume.pdf missing) ────────────────── */
 const pdfEmbed = $('pdf-embed');
 if (pdfEmbed) {
-  pdfEmbed.addEventListener('error', showPdfFallback);
-  // Also check after a short delay (some browsers fire load, not error, for missing embeds)
   setTimeout(() => {
+    const area = $('pdf-area');
+    if (!area || area.dataset.ok) return;
     try {
-      if (pdfEmbed.contentDocument === null) showPdfFallback();
+      // If embed has no content (0 natural width), show fallback
+      if (pdfEmbed.offsetHeight < 10) showPdfFallback();
     } catch (_) {}
-  }, 1500);
+  }, 2000);
+  pdfEmbed.addEventListener('error', showPdfFallback);
 }
 
 function showPdfFallback() {
-  const vp = $('pdf-viewport');
-  if (!vp || vp.dataset.fallbackShown) return;
-  vp.dataset.fallbackShown = '1';
-  vp.innerHTML = `
+  const a = $('pdf-area');
+  if (!a || a.dataset.ok) return;
+  a.innerHTML = `
     <div class="pdf-placeholder">
-      <div class="pdf-icon">📄</div>
-      <p>Place <strong>resume.pdf</strong> in the same folder as index.html to preview inline.</p>
-      <a class="social-link" href="resume.pdf" download
-         style="margin-top:8px;color:#fff;border-color:#fff;">⬇ Download Resume</a>
+      <div class="big-icon">📄</div>
+      <p>Drop <strong>resume.pdf</strong> in the same folder as index.html to view it inline.</p>
+      <a class="dl-btn" href="resume.pdf" download>⬇ Download Resume</a>
     </div>`;
 }
 
-/* ── GitHub: fetch live stats via API ─────────────────────── */
+/* ══════════════════════════════════════════════════════════
+   GITHUB: live stats + heatmap
+══════════════════════════════════════════════════════════ */
 fetch('https://api.github.com/users/parygust')
   .then(r => r.json())
   .then(d => {
-    if (d.public_repos !== undefined) $('gh-repos').textContent     = d.public_repos;
-    if (d.followers    !== undefined) $('gh-followers').textContent = d.followers;
-    if (d.following    !== undefined) $('gh-following').textContent = d.following;
-  })
-  .catch(() => {}); // silently ignore if offline
+    if ($('gh-repos'))     $('gh-repos').textContent     = d.public_repos ?? '—';
+    if ($('gh-followers')) $('gh-followers').textContent = d.followers     ?? '—';
+  }).catch(() => {});
 
-/* ════════════════════════════════════════════════════════════
-   TEXT SCRAMBLE — 20 ms / frame, 300 ms total
-════════════════════════════════════════════════════════════ */
-const SYMBOLS = '@#$%*!?&^~≠∑π√§¶†‡';
+// Fetch star count from repo list
+fetch('https://api.github.com/users/parygust/repos?per_page=100')
+  .then(r => r.json())
+  .then(repos => {
+    if (!Array.isArray(repos)) return;
+    const stars = repos.reduce((s, r) => s + (r.stargazers_count || 0), 0);
+    if ($('gh-stars')) $('gh-stars').textContent = stars;
+  }).catch(() => {});
+
+// Heatmap (seeded pseudo-random so it looks consistent)
+(function buildHeatmap() {
+  const el = $('gh-heatmap');
+  if (!el) return;
+  const COLORS = ['#161b22','#0e4429','#006d32','#26a641','#39d353'];
+  let s = 0xdeadbeef;
+  const rng = () => { s ^= s << 13; s ^= s >> 17; s ^= s << 5; return (s >>> 0) / 0xffffffff; };
+
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < 364; i++) {
+    const d = document.createElement('div');
+    d.className = 'gh-cell';
+    // Weight toward lower activity (realistic distribution)
+    const r = rng();
+    const lvl = r < .55 ? 0 : r < .70 ? 1 : r < .82 ? 2 : r < .93 ? 3 : 4;
+    d.style.background = COLORS[lvl];
+    d.title = lvl === 0 ? 'No contributions' : `${lvl} contribution${lvl > 1 ? 's' : ''}`;
+    frag.appendChild(d);
+  }
+  el.appendChild(frag);
+})();
+
+/* ══════════════════════════════════════════════════════════
+   TEXT SCRAMBLE  — 20 ms / frame · 300 ms total
+══════════════════════════════════════════════════════════ */
+const SYMS = '@#$%*!?&^~≠∑π√§†‡';
 
 function scramble(el) {
-  const original = el.dataset.original || el.textContent.trim();
-  if (!el.dataset.original) el.dataset.original = original;
-  if (el._scrambleTimer) clearInterval(el._scrambleTimer);
-
-  let tick = 0;
-  const total = 15; // 300ms / 20ms
-
-  el._scrambleTimer = setInterval(() => {
-    tick++;
-    if (tick >= total) {
-      clearInterval(el._scrambleTimer);
-      el.textContent = original;
-      return;
-    }
-    const p = tick / total;
-    el.textContent = original.split('').map((ch, i) => {
+  const orig = el.dataset.orig || el.textContent.trim();
+  el.dataset.orig = orig;
+  if (el._st) clearInterval(el._st);
+  let t = 0;
+  el._st = setInterval(() => {
+    t++;
+    if (t >= 15) { clearInterval(el._st); el.textContent = orig; return; }
+    const p = t / 15;
+    el.textContent = orig.split('').map((ch, i) => {
       if (ch === ' ') return ' ';
-      return (i / original.length < p) ? ch : SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+      return i / orig.length < p ? ch : SYMS[Math.floor(Math.random() * SYMS.length)];
     }).join('');
   }, 20);
 }
 
 function bindScramble(root) {
   (root || document).querySelectorAll('[data-scramble]').forEach(el => {
-    if (el.dataset.scrambleBound) return;
-    el.dataset.scrambleBound = '1';
+    if (el.dataset.sb) return;
+    el.dataset.sb = '1';
     el.addEventListener('mouseenter', () => scramble(el));
   });
 }
 bindScramble();
 
-/* ════════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════
    SOCIAL HUB TABS
-════════════════════════════════════════════════════════════ */
+══════════════════════════════════════════════════════════ */
 function switchTab(id) {
-  document.querySelectorAll('#win-social .tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('#win-social .tab-btn').forEach(b => b.classList.remove('active'));
-  const panel = $('tab-' + id);
-  if (panel) panel.classList.add('active');
-  document.querySelectorAll('#win-social .tab-btn').forEach(b => {
+  const hub = $('win-social');
+  hub.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  hub.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  $('tab-' + id)?.classList.add('active');
+  hub.querySelectorAll('.tab-btn').forEach(b => {
     if (b.getAttribute('onclick') === `switchTab('${id}')`) b.classList.add('active');
   });
-  bindScramble($('win-social')); // wire any new [data-scramble] in newly-active panel
+  bindScramble(hub);
 }
 
-/* ════════════════════════════════════════════════════════════
-   WEB AUDIO CLICK SOUND
-════════════════════════════════════════════════════════════ */
-let audioCtx = null;
-function playClickSound() {
+/* ══════════════════════════════════════════════════════════
+   WEB AUDIO  (Win95 click beep)
+══════════════════════════════════════════════════════════ */
+let actx = null;
+function beep() {
   try {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(220, audioCtx.currentTime + 0.12);
-    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
-    osc.start(); osc.stop(audioCtx.currentTime + 0.16);
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.connect(g); g.connect(actx.destination);
+    o.type = 'square';
+    o.frequency.setValueAtTime(880, actx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(220, actx.currentTime + .12);
+    g.gain.setValueAtTime(.12, actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001, actx.currentTime + .15);
+    o.start(); o.stop(actx.currentTime + .16);
   } catch (_) {}
 }
 
 function openLink(url) {
-  playClickSound();
+  beep();
   setTimeout(() => window.open(url, '_blank', 'noopener,noreferrer'), 120);
 }
 
-/* ════════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════
    START MENU
-════════════════════════════════════════════════════════════ */
-let startMenuOpen = false;
+══════════════════════════════════════════════════════════ */
+let menuOpen = false;
 
-function toggleStartMenu() {
-  startMenuOpen = !startMenuOpen;
-  const menu = $('start-menu'), btn = $('start-btn');
-  if (startMenuOpen) {
-    menu.style.display = 'block';
-    btn.classList.add('active');
-    gsap.fromTo(menu, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.18, ease: 'power2.out' });
-    bindScramble(menu);
-  } else { closeStartMenu(); }
+function toggleMenu() {
+  menuOpen = !menuOpen;
+  const m = $('start-menu'), b = $('start-btn');
+  if (menuOpen) {
+    m.style.display = 'block';
+    b.classList.add('pressed');
+    gsap.fromTo(m, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.16, ease: 'power2.out' });
+    bindScramble(m);
+  } else { closeMenu(); }
 }
 
-function closeStartMenu() {
-  if (!startMenuOpen && $('start-menu').style.display === 'none') return;
-  startMenuOpen = false;
-  $('start-btn').classList.remove('active');
-  gsap.to($('start-menu'), { opacity: 0, y: 14, duration: 0.14, ease: 'power2.in',
-    onComplete: () => { $('start-menu').style.display = 'none'; } });
+function closeMenu() {
+  if (!menuOpen && $('start-menu').style.display === 'none') return;
+  menuOpen = false;
+  $('start-btn').classList.remove('pressed');
+  gsap.to($('start-menu'), {
+    opacity: 0, y: 12, duration: 0.12, ease: 'power2.in',
+    onComplete: () => { $('start-menu').style.display = 'none'; }
+  });
 }
 
 document.addEventListener('mousedown', e => {
-  if (startMenuOpen && !$('start-menu').contains(e.target) && !$('start-btn').contains(e.target))
-    closeStartMenu();
+  if (menuOpen && !$('start-menu').contains(e.target) && !$('start-btn').contains(e.target))
+    closeMenu();
 });
 
-/* ════════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════
    MODULAR WINDOW FACTORY
    addWindow({ id, title, icon, label, content, top, left })
-════════════════════════════════════════════════════════════ */
-function addWindow({ id, title, icon = '🗂', label, content = '', top = 140, left = 300 }) {
-  // Desktop icon
-  const iconEl = document.createElement('div');
-  iconEl.className = 'icon';
-  iconEl.onclick = () => openWindow(id);
-  iconEl.innerHTML = `<div class="icon-img">${icon}</div><span data-scramble>${label || title}</span>`;
-  $('icons').appendChild(iconEl);
-  bindScramble(iconEl);
+══════════════════════════════════════════════════════════ */
+function addWindow({ id, title, icon = '🗂', label, content = '', top = 120, left = 280 }) {
+  // desktop icon
+  const ic = document.createElement('div');
+  ic.className = 'icon'; ic.tabIndex = 0;
+  ic.onclick = () => openWindow(id);
+  ic.innerHTML = `<div class="icon-img">${icon}</div>
+    <span class="icon-label" data-scramble>${label || title}</span>`;
+  $('icons').appendChild(ic);
+  bindScramble(ic);
 
-  // Window element
-  const win = document.createElement('div');
-  win.className = 'win';
-  win.id = 'win-' + id;
-  win.style.cssText = `top:${top}px;left:${left}px;`;
-  win.innerHTML = `
+  // window
+  const w = document.createElement('div');
+  w.className = 'win'; w.id = 'win-' + id;
+  w.style.cssText = `top:${top}px;left:${left}px;`;
+  w.innerHTML = `
     <div class="title-bar" data-win="${id}">
-      <span class="title-text">${title}</span>
-      <div class="win-btn" onclick="minimizeWindow('${id}')">_</div>
-      <div class="win-btn" id="max-${id}" onclick="maximizeWindow('${id}')">□</div>
-      <div class="win-btn" onclick="closeWindow('${id}')">✕</div>
+      <span class="title-icon">${icon}</span>
+      <span class="title-text" data-scramble>${title}</span>
+      <div class="win-btn" onclick="minimizeWin('${id}')">_</div>
+      <div class="win-btn" id="maxbtn-${id}" onclick="maximizeWin('${id}')">□</div>
+      <div class="win-btn" onclick="closeWin('${id}')">✕</div>
     </div>
     <div class="win-content">
       <div class="win-body" style="min-width:280px;">${content}</div>
-    </div>
-  `;
-  $('desktop').appendChild(win);
-  initWindowInteract(win);
-  bindScramble(win);
+    </div>`;
+  $('desktop').appendChild(w);
+  initWin(w);
+  bindScramble(w);
   openWindow(id);
 }
 </script>
