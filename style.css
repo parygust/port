@@ -106,6 +106,12 @@ body {
   flex-shrink: 0;
   line-height: 1;
 }
+.icon-img img {
+  width: 128px; height: 128px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  -webkit-user-drag: none;
+}
 .icon-label {
   font-family: var(--font-px);
   font-size: 16px;
