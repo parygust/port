@@ -5,25 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portfolio — Retro OS</title>
 
-  <!-- GSAP -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <!-- interact.js -->
   <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 
   <style>
-    /* ── Reset & Base ─────────────────────────────────────── */
+    /* ── Reset ────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      overflow: hidden;
-      background: #008080;
-      font-family: 'Courier New', monospace;
-    }
+    body { overflow: hidden; background: #008080; font-family: 'Courier New', monospace; }
 
     /* ── Preloader ────────────────────────────────────────── */
     #preloader {
       position: fixed; inset: 0; z-index: 9999;
-      background: #fff;
-      display: flex; align-items: center; justify-content: center;
+      background: #fff; display: flex;
+      align-items: center; justify-content: center;
     }
     #counter {
       font-size: clamp(4rem, 12vw, 9rem);
@@ -36,18 +30,17 @@
     #desktop {
       width: 100vw; height: 100vh; position: relative;
       background:
-        repeating-linear-gradient(0deg,   transparent, transparent 39px, rgba(0,0,0,.07) 39px, rgba(0,0,0,.07) 40px),
-        repeating-linear-gradient(90deg,  transparent, transparent 39px, rgba(0,0,0,.07) 39px, rgba(0,0,0,.07) 40px),
+        repeating-linear-gradient(0deg,  transparent, transparent 39px, rgba(0,0,0,.07) 39px, rgba(0,0,0,.07) 40px),
+        repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(0,0,0,.07) 39px, rgba(0,0,0,.07) 40px),
         #008080;
     }
 
-    /* ── Desktop Icons (128px jumbo) ─────────────────────── */
+    /* ── Desktop Icons (128 px) ───────────────────────────── */
     #icons {
       position: absolute; top: 12px; left: 12px;
       display: grid;
       grid-template-columns: 148px;
       grid-auto-rows: 168px;
-      gap: 0;
     }
     .icon {
       display: flex; flex-direction: column; align-items: center;
@@ -58,185 +51,256 @@
       font-size: 12px; text-align: center;
     }
     .icon:hover { background: rgba(255,255,255,0.1); }
-    .icon:hover .icon-img {
-      outline: 2px dashed rgba(255,255,255,0.9);
-      background: rgba(0,0,128,0.35);
-    }
+    .icon:hover .icon-img { outline: 2px dashed rgba(255,255,255,.9); background: rgba(0,0,128,.35); }
     .icon-img {
       width: 128px; height: 128px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 80px;
-      image-rendering: pixelated;
-      flex-shrink: 0;
+      font-size: 80px; image-rendering: pixelated; flex-shrink: 0;
     }
-    .icon span {
-      max-width: 136px;
-      word-break: break-word;
-      text-shadow: 1px 1px 2px #000;
-    }
+    .icon span { max-width: 136px; word-break: break-word; text-shadow: 1px 1px 2px #000; }
 
     /* ── Window chrome ────────────────────────────────────── */
     .win {
       position: absolute;
-      min-width: 340px;
+      min-width: 320px; min-height: 180px;
       background: #c0c0c0;
       border: 2px solid #fff;
       border-right-color: #000; border-bottom-color: #000;
       box-shadow: 2px 2px 0 #868686, inset 1px 1px 0 #dfdfdf;
       user-select: none;
+      /* flex column so win-content fills remaining space */
+      display: flex; flex-direction: column; overflow: hidden;
     }
     .win.active { z-index: 100; }
 
+    /* SE-corner resize grip (visual only) */
+    .win::after {
+      content: '';
+      position: absolute; bottom: 3px; right: 3px;
+      width: 10px; height: 10px;
+      background: repeating-linear-gradient(
+        -45deg,
+        #868686 0px, #868686 1px,
+        transparent 1px, transparent 3px
+      );
+      pointer-events: none;
+    }
+
     .title-bar {
       display: flex; align-items: center; gap: 4px;
-      padding: 3px 4px;
+      padding: 3px 4px; flex-shrink: 0;
       background: linear-gradient(90deg, #000080, #1084d0);
       color: #fff; font-size: 12px; font-weight: bold;
       cursor: move;
     }
-    .title-bar .title-text { flex: 1; pointer-events: none; }
+    .title-bar .title-text { flex: 1; pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
     .win-btn {
       width: 16px; height: 14px; flex-shrink: 0;
       background: #c0c0c0;
-      border: 1px solid #fff;
-      border-right-color: #000; border-bottom-color: #000;
+      border: 1px solid #fff; border-right-color: #000; border-bottom-color: #000;
       display: flex; align-items: center; justify-content: center;
       font-size: 9px; font-weight: bold; color: #000;
       cursor: pointer; line-height: 1;
     }
     .win-btn:hover { background: #dfdfdf; }
+    .win-btn:active { border-color: #000; border-right-color: #fff; border-bottom-color: #fff; }
 
     .menu-bar {
-      background: #c0c0c0;
-      border-bottom: 1px solid #868686;
-      padding: 2px 8px;
-      font-size: 12px; display: flex; gap: 12px;
+      background: #c0c0c0; border-bottom: 1px solid #868686;
+      padding: 2px 8px; font-size: 12px; display: flex; gap: 12px;
+      flex-shrink: 0;
     }
-    .menu-bar span {
-      cursor: pointer; padding: 1px 4px;
-      text-decoration: underline;
-    }
+    .menu-bar span { cursor: pointer; padding: 1px 4px; text-decoration: underline; }
     .menu-bar span:hover { background: #000080; color: #fff; }
 
-    .win-body {
-      padding: 14px 16px;
-      font-size: 13px; color: #000;
-      line-height: 1.7;
-    }
+    /* scrollable inner wrapper */
+    .win-content { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; }
 
-    /* ── Tab system (Social Hub) ──────────────────────────── */
+    .win-body { padding: 14px 16px; font-size: 13px; color: #000; line-height: 1.7; }
+
+    /* ── Tab system ───────────────────────────────────────── */
     .tab-bar {
       display: flex; gap: 0;
-      background: #c0c0c0;
-      border-bottom: 2px solid #868686;
-      padding: 4px 4px 0;
+      background: #c0c0c0; border-bottom: 2px solid #868686;
+      padding: 4px 4px 0; flex-shrink: 0;
     }
     .tab-btn {
       padding: 4px 14px; font-size: 12px;
-      border: 2px solid #868686;
-      border-bottom: none;
-      background: #a8a8a8; cursor: pointer;
-      margin-right: 2px; font-family: inherit;
+      border: 2px solid #868686; border-bottom: none;
+      background: #a8a8a8; cursor: pointer; margin-right: 2px;
+      font-family: inherit;
       border-top-color: #fff; border-left-color: #fff;
     }
     .tab-btn.active {
-      background: #c0c0c0;
-      border-color: #fff; border-right-color: #868686;
+      background: #c0c0c0; border-color: #fff; border-right-color: #868686;
       position: relative; top: 2px;
     }
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
-    /* ── Social card ──────────────────────────────────────── */
+    /* ── Social cards ─────────────────────────────────────── */
     .social-card {
       background: #fff;
-      border: 1px solid #868686;
-      border-right-color: #000; border-bottom-color: #000;
-      padding: 16px; margin-bottom: 10px;
+      border: 1px solid #868686; border-right-color: #000; border-bottom-color: #000;
+      margin-bottom: 10px;
     }
-    .social-card h3 { font-size: 14px; font-weight: bold; margin-bottom: 6px; }
-    .social-card p  { font-size: 12px; color: #333; margin-bottom: 8px; }
-    .social-card .stat-row { display: flex; gap: 16px; margin-bottom: 8px; }
-    .social-card .stat { text-align: center; }
-    .social-card .stat-num { font-weight: bold; font-size: 18px; }
-    .social-card .stat-lbl { font-size: 10px; color: #555; }
+    .social-card-inner { padding: 14px 16px; }
+    .social-card h3 { font-size: 14px; font-weight: bold; margin-bottom: 4px; }
+    .social-card p  { font-size: 12px; color: #333; margin-bottom: 8px; line-height: 1.5; }
     .social-link {
-      display: inline-block;
-      padding: 4px 12px; font-size: 12px;
-      background: #c0c0c0;
-      border: 2px solid #fff;
+      display: inline-block; padding: 4px 12px; font-size: 12px;
+      background: #c0c0c0; border: 2px solid #fff;
       border-right-color: #000; border-bottom-color: #000;
-      cursor: pointer; text-decoration: none; color: #000;
-      font-family: inherit;
+      cursor: pointer; text-decoration: none; color: #000; font-family: inherit;
     }
     .social-link:hover { background: #dfdfdf; }
-    .social-link:active { border-color: #000; border-right-color: #fff; border-bottom-color: #fff; }
 
-    /* ── Adobe Acrobat window ─────────────────────────────── */
-    #win-resume .title-bar {
-      background: linear-gradient(90deg, #8B0000, #c00000);
+    /* LinkedIn-style header banner */
+    .li-banner {
+      height: 60px;
+      background: linear-gradient(135deg, #004471, #0077b5 60%, #00a0dc);
     }
+    .li-avatar-wrap {
+      display: flex; align-items: flex-end; gap: 12px;
+      padding: 0 16px; margin-top: -28px; margin-bottom: 8px;
+    }
+    .li-avatar {
+      width: 56px; height: 56px; border-radius: 4px;
+      background: #c0c0c0; border: 3px solid #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px; flex-shrink: 0;
+    }
+    .li-name { font-weight: bold; font-size: 15px; line-height: 1.2; }
+    .li-title { font-size: 12px; color: #555; }
+
+    .li-section { padding: 10px 16px; border-top: 1px solid #d0d0d0; }
+    .li-section h4 { font-size: 12px; font-weight: bold; margin-bottom: 6px; color: #333; }
+    .li-exp-item { display: flex; gap: 10px; margin-bottom: 8px; font-size: 12px; }
+    .li-exp-icon { font-size: 18px; flex-shrink: 0; }
+    .li-exp-title { font-weight: bold; }
+    .li-exp-sub { color: #666; font-size: 11px; }
+
+    .skill-tag {
+      display: inline-block; padding: 2px 8px;
+      background: #e8f3fb; border: 1px solid #0077b5;
+      font-size: 11px; color: #0077b5; margin: 2px;
+    }
+
+    /* itch.io gallery */
+    .itch-header {
+      background: linear-gradient(135deg, #1a1a1a, #333);
+      padding: 12px 16px; color: #fff;
+    }
+    .itch-header h3 { font-size: 14px; font-weight: bold; }
+    .itch-header p  { font-size: 11px; color: #aaa; margin-top: 2px; }
+    .game-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 8px; padding: 12px;
+      background: #1a1a1a;
+    }
+    .game-card {
+      background: #2a2a2a;
+      border: 1px solid #444; cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .game-card:hover { border-color: #fa5c5c; }
+    .game-thumb {
+      width: 100%; aspect-ratio: 16/9;
+      background: #111;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px;
+    }
+    .game-info { padding: 8px 10px; }
+    .game-title { font-size: 13px; font-weight: bold; color: #fff; margin-bottom: 2px; }
+    .game-desc  { font-size: 11px; color: #aaa; line-height: 1.4; }
+    .game-tags  { margin-top: 6px; display: flex; gap: 4px; flex-wrap: wrap; }
+    .game-tag {
+      font-size: 10px; padding: 1px 5px;
+      background: #333; color: #ccc; border: 1px solid #555;
+    }
+    .game-tag.jam { border-color: #fa5c5c; color: #fa5c5c; background: #1a0808; }
+    .itch-footer {
+      background: #111; padding: 10px 16px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .itch-footer p { font-size: 11px; color: #888; }
+
+    /* GitHub activity */
+    .gh-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px; background: #0d1117; color: #e6edf3;
+    }
+    .gh-avatar { font-size: 40px; }
+    .gh-name   { font-weight: bold; font-size: 15px; }
+    .gh-sub    { font-size: 11px; color: #768390; }
+    .gh-stats  { display: flex; gap: 20px; padding: 10px 16px; background: #161b22; border-bottom: 1px solid #30363d; }
+    .gh-stat   { text-align: center; }
+    .gh-stat-n { font-weight: bold; font-size: 16px; color: #e6edf3; }
+    .gh-stat-l { font-size: 10px; color: #768390; }
+    .gh-chart-wrap {
+      background: #0d1117; padding: 12px 16px;
+    }
+    .gh-chart-wrap img { max-width: 100%; display: block; filter: invert(1) hue-rotate(180deg); }
+    .gh-chart-fallback { font-size: 11px; color: #768390; text-align: center; padding: 8px 0; }
+    .gh-footer { background: #0d1117; padding: 10px 16px; }
+
+    /* ── Adobe Acrobat title bar ──────────────────────────── */
+    #win-resume .title-bar { background: linear-gradient(90deg, #8B0000, #c00000); }
+
     .acrobat-toolbar {
-      background: #d4d0c8;
-      border-bottom: 1px solid #868686;
-      padding: 3px 6px;
-      display: flex; align-items: center; gap: 6px;
-      font-size: 11px;
+      background: #d4d0c8; border-bottom: 1px solid #868686;
+      padding: 4px 6px; display: flex; align-items: center; gap: 6px;
+      font-size: 11px; flex-shrink: 0;
     }
     .acrobat-toolbar .tb-btn {
-      padding: 2px 8px;
-      background: #c0c0c0;
+      padding: 3px 10px; background: #c0c0c0;
       border: 1px solid #fff; border-right-color: #868686; border-bottom-color: #868686;
       font-size: 11px; cursor: pointer; font-family: inherit;
     }
     .acrobat-toolbar .tb-btn:hover { background: #d0d0d0; }
+
     .pdf-viewport {
-      width: 100%; height: 500px;
+      flex: 1; min-height: 0;
       background: #808080;
-      display: flex; align-items: center; justify-content: center;
+      display: flex; align-items: stretch; justify-content: center;
       overflow: hidden;
     }
-    .pdf-viewport embed,
-    .pdf-viewport iframe {
-      width: 100%; height: 100%; border: none;
-    }
+    .pdf-viewport embed { width: 100%; height: 100%; border: none; display: block; }
     .pdf-placeholder {
-      text-align: center; color: #fff; font-size: 13px; padding: 20px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: #fff; font-size: 13px; padding: 24px; text-align: center; gap: 12px;
     }
-    .pdf-placeholder .pdf-icon { font-size: 48px; margin-bottom: 12px; }
+    .pdf-placeholder .pdf-icon { font-size: 56px; }
 
     /* ── Project cards ────────────────────────────────────── */
     .proj-card {
       background: #fff;
-      border: 1px solid #868686;
-      border-right-color: #000; border-bottom-color: #000;
+      border: 1px solid #868686; border-right-color: #000; border-bottom-color: #000;
       padding: 8px 10px; margin-bottom: 8px;
     }
     .proj-card h3 { font-weight: bold; font-size: 13px; }
     .proj-card p  { font-size: 11px; color: #555; margin-top: 2px; }
 
-    /* ── Contact inputs ───────────────────────────────────── */
+    /* ── Contact ──────────────────────────────────────────── */
     .retro-input {
       width: 100%; background: #fff;
-      border: 1px solid #000;
-      border-top-color: #868686; border-left-color: #868686;
+      border: 1px solid #000; border-top-color: #868686; border-left-color: #868686;
       padding: 4px 6px; font-size: 12px; font-family: inherit;
-      outline: none; margin-bottom: 8px;
+      outline: none; margin-bottom: 8px; display: block;
     }
     .retro-btn {
       padding: 4px 16px; background: #c0c0c0;
-      border: 2px solid #fff;
-      border-right-color: #000; border-bottom-color: #000;
+      border: 2px solid #fff; border-right-color: #000; border-bottom-color: #000;
       font-size: 12px; font-family: inherit; cursor: pointer;
     }
     .retro-btn:hover { background: #dfdfdf; }
     .retro-btn:active { border-color: #000; border-right-color: #fff; border-bottom-color: #fff; }
 
-    /* ── Scramble target ──────────────────────────────────── */
+    /* ── Scramble ─────────────────────────────────────────── */
     [data-scramble] { cursor: pointer; display: inline-block; }
 
-    /* ── Taskbar (64px) ───────────────────────────────────── */
+    /* ── Taskbar (64 px) ──────────────────────────────────── */
     #taskbar {
       position: fixed; bottom: 0; left: 0; right: 0;
       height: 64px; background: #c0c0c0;
@@ -248,18 +312,13 @@
       display: flex; align-items: center; gap: 8px;
       padding: 6px 16px; height: 50px;
       background: #c0c0c0;
-      border: 2px solid #fff;
-      border-right-color: #000; border-bottom-color: #000;
+      border: 2px solid #fff; border-right-color: #000; border-bottom-color: #000;
       font-size: 16px; font-weight: bold; cursor: pointer;
       flex-shrink: 0; font-family: inherit;
     }
     #start-btn:hover { background: #dfdfdf; }
-    #start-btn.active {
-      border-color: #000; border-right-color: #fff; border-bottom-color: #fff;
-      background: #b0b0b0;
-    }
+    #start-btn.active { border-color: #000; border-right-color: #fff; border-bottom-color: #fff; background: #b0b0b0; }
 
-    /* ── Quick Launch ─────────────────────────────────────── */
     #quick-launch {
       display: flex; align-items: center; gap: 4px;
       padding: 0 8px; height: 50px;
@@ -269,36 +328,23 @@
     .ql-icon {
       width: 38px; height: 38px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 22px; cursor: pointer;
-      border: 1px solid transparent;
+      font-size: 22px; cursor: pointer; border: 1px solid transparent;
     }
-    .ql-icon:hover {
-      border-color: #fff; border-right-color: #868686; border-bottom-color: #868686;
-      background: #d0d0d0;
-    }
+    .ql-icon:hover { border-color: #fff; border-right-color: #868686; border-bottom-color: #868686; background: #d0d0d0; }
 
-    /* ── Taskbar divider ──────────────────────────────────── */
-    .tb-sep {
-      width: 2px; height: 40px;
-      background: #868686; margin: 0 4px;
-      box-shadow: 1px 0 0 #fff;
-    }
+    .tb-sep { width: 2px; height: 40px; background: #868686; margin: 0 4px; box-shadow: 1px 0 0 #fff; }
 
-    /* ── System clock ─────────────────────────────────────── */
     .clock {
       margin-left: auto; padding: 6px 12px;
-      border: 1px solid #868686;
-      border-top-color: transparent; border-left-color: transparent;
+      border: 1px solid #868686; border-top-color: transparent; border-left-color: transparent;
       font-size: 15px; text-align: center; line-height: 1.4;
     }
 
     /* ── Start Menu ───────────────────────────────────────── */
     #start-menu {
-      position: fixed; bottom: 66px; left: 8px;
-      width: 240px;
+      position: fixed; bottom: 66px; left: 8px; width: 240px;
       background: #c0c0c0;
-      border: 2px solid #fff;
-      border-right-color: #000; border-bottom-color: #000;
+      border: 2px solid #fff; border-right-color: #000; border-bottom-color: #000;
       box-shadow: 2px 2px 0 #868686;
       z-index: 9500; display: none;
     }
@@ -307,11 +353,9 @@
       color: #fff; font-weight: bold; font-size: 14px;
       padding: 12px 10px;
       display: flex; align-items: center; gap: 10px;
-      letter-spacing: 0.04em;
     }
     #start-menu .sm-avatar {
-      width: 42px; height: 42px;
-      background: #c0c0c0;
+      width: 42px; height: 42px; background: #c0c0c0;
       display: flex; align-items: center; justify-content: center;
       font-size: 26px; border: 2px solid #fff; flex-shrink: 0;
     }
@@ -321,10 +365,7 @@
     }
     .sm-item:hover { background: #000080; color: #fff; }
     .sm-item .sm-icon { font-size: 18px; width: 22px; text-align: center; }
-    .sm-divider {
-      height: 1px; background: #868686;
-      margin: 2px 0; box-shadow: 0 1px 0 #fff;
-    }
+    .sm-divider { height: 1px; background: #868686; margin: 2px 0; box-shadow: 0 1px 0 #fff; }
   </style>
 </head>
 <body>
@@ -332,58 +373,39 @@
 <!-- ══════════════════════════════════════════════════════════
      PRELOADER
 ══════════════════════════════════════════════════════════════ -->
-<div id="preloader">
-  <div id="counter">00</div>
-</div>
+<div id="preloader"><div id="counter">00</div></div>
 
 <!-- ══════════════════════════════════════════════════════════
      DESKTOP
 ══════════════════════════════════════════════════════════════ -->
 <div id="desktop">
 
-  <!-- ── Desktop icons (strict 148×168 grid) ───────────── -->
+  <!-- ── Desktop icons ──────────────────────────────────── -->
   <div id="icons">
-
     <div class="icon" onclick="openWindow('about')">
-      <div class="icon-img">👤</div>
-      <span data-scramble>About.exe</span>
+      <div class="icon-img">👤</div><span data-scramble>About.exe</span>
     </div>
-
     <div class="icon" onclick="openWindow('projects')">
-      <div class="icon-img">📁</div>
-      <span data-scramble>Projects</span>
+      <div class="icon-img">📁</div><span data-scramble>Projects</span>
     </div>
-
     <div class="icon" onclick="openWindow('contact')">
-      <div class="icon-img">✉️</div>
-      <span data-scramble>Contact</span>
+      <div class="icon-img">✉️</div><span data-scramble>Contact</span>
     </div>
-
     <div class="icon" onclick="openWindow('social')">
-      <div class="icon-img">🌐</div>
-      <span data-scramble>Social Hub</span>
+      <div class="icon-img">🌐</div><span data-scramble>Social Hub</span>
     </div>
-
     <div class="icon" onclick="openWindow('resume')">
-      <div class="icon-img">📄</div>
-      <span data-scramble>Resume.pdf</span>
+      <div class="icon-img">📄</div><span data-scramble>Resume.pdf</span>
     </div>
-
     <div class="icon" onclick="openLink('https://github.com/parygust')">
-      <div class="icon-img">🐙</div>
-      <span data-scramble>GitHub</span>
+      <div class="icon-img">🐙</div><span data-scramble>GitHub</span>
     </div>
-
     <div class="icon" onclick="openLink('https://www.linkedin.com/in/enes-ba%C5%9F-0955a7237/')">
-      <div class="icon-img">💼</div>
-      <span data-scramble>LinkedIn</span>
+      <div class="icon-img">💼</div><span data-scramble>LinkedIn</span>
     </div>
-
     <div class="icon" onclick="openLink('https://parygust.itch.io')">
-      <div class="icon-img">🎮</div>
-      <span data-scramble>itch.io</span>
+      <div class="icon-img">🎮</div><span data-scramble>itch.io</span>
     </div>
-
   </div>
 
   <!-- ── Window: About ──────────────────────────────────── -->
@@ -391,6 +413,7 @@
     <div class="title-bar" data-win="about">
       <span class="title-text">About — User Profile</span>
       <div class="win-btn" onclick="minimizeWindow('about')">_</div>
+      <div class="win-btn" id="max-about" onclick="maximizeWindow('about')">□</div>
       <div class="win-btn" onclick="closeWindow('about')">✕</div>
     </div>
     <div class="menu-bar">
@@ -398,15 +421,17 @@
       <span data-scramble>Edit</span>
       <span data-scramble>Help</span>
     </div>
-    <div class="win-body">
-      <p style="font-weight:bold;font-size:16px;margin-bottom:6px;">Hello, World. 👋</p>
-      <p>I'm a <strong>creative developer</strong> building immersive digital experiences at the intersection of design and technology.</p>
-      <br/>
-      <p>→ Full-stack web development</p>
-      <p>→ Motion design &amp; GSAP animation</p>
-      <p>→ 3D &amp; WebGL experimentation</p>
-      <br/>
-      <p style="font-size:11px;color:#666;">System: Portfolio OS v1.0 — Windows Teal Edition</p>
+    <div class="win-content">
+      <div class="win-body">
+        <p style="font-weight:bold;font-size:16px;margin-bottom:6px;">Hello, World. 👋</p>
+        <p>I'm a <strong>creative developer</strong> building immersive digital experiences at the intersection of design and technology.</p>
+        <br/>
+        <p>→ Full-stack web development</p>
+        <p>→ Motion design &amp; GSAP animation</p>
+        <p>→ 3D &amp; WebGL experimentation</p>
+        <br/>
+        <p style="font-size:11px;color:#666;">System: Portfolio OS v1.0 — Windows Teal Edition</p>
+      </div>
     </div>
   </div>
 
@@ -415,24 +440,27 @@
     <div class="title-bar" data-win="projects">
       <span class="title-text">📁 Projects</span>
       <div class="win-btn" onclick="minimizeWindow('projects')">_</div>
+      <div class="win-btn" id="max-projects" onclick="maximizeWindow('projects')">□</div>
       <div class="win-btn" onclick="closeWindow('projects')">✕</div>
     </div>
     <div class="menu-bar">
       <span data-scramble>View</span>
       <span data-scramble>Sort</span>
     </div>
-    <div class="win-body" style="min-width:300px;">
-      <div class="proj-card">
-        <h3 data-scramble>Project Alpha</h3>
-        <p>WebGL generative art — Three.js + GLSL shaders</p>
-      </div>
-      <div class="proj-card">
-        <h3 data-scramble>Project Beta</h3>
-        <p>Real-time collaborative whiteboard — Next.js + WebSockets</p>
-      </div>
-      <div class="proj-card">
-        <h3 data-scramble>Project Gamma</h3>
-        <p>AI-driven music visualizer — Tone.js + React</p>
+    <div class="win-content">
+      <div class="win-body" style="min-width:300px;">
+        <div class="proj-card">
+          <h3 data-scramble>Project Alpha</h3>
+          <p>WebGL generative art — Three.js + GLSL shaders</p>
+        </div>
+        <div class="proj-card">
+          <h3 data-scramble>Project Beta</h3>
+          <p>Real-time collaborative whiteboard — Next.js + WebSockets</p>
+        </div>
+        <div class="proj-card">
+          <h3 data-scramble>Project Gamma</h3>
+          <p>AI-driven music visualizer — Tone.js + React</p>
+        </div>
       </div>
     </div>
   </div>
@@ -442,110 +470,208 @@
     <div class="title-bar" data-win="contact">
       <span class="title-text">✉ Contact</span>
       <div class="win-btn" onclick="minimizeWindow('contact')">_</div>
+      <div class="win-btn" id="max-contact" onclick="maximizeWindow('contact')">□</div>
       <div class="win-btn" onclick="closeWindow('contact')">✕</div>
     </div>
     <div class="menu-bar">
       <span data-scramble>Send</span>
       <span data-scramble>Options</span>
     </div>
-    <div class="win-body" style="min-width:280px;">
-      <label style="font-size:11px;">Name:</label>
-      <input class="retro-input" type="text" placeholder="Your Name" />
-      <label style="font-size:11px;">Email:</label>
-      <input class="retro-input" type="email" placeholder="you@example.com" />
-      <label style="font-size:11px;">Message:</label>
-      <textarea class="retro-input" rows="3" placeholder="Say hello..."></textarea>
-      <button class="retro-btn" data-scramble>Send Message</button>
+    <div class="win-content">
+      <div class="win-body" style="min-width:280px;">
+        <label style="font-size:11px;">Name:</label>
+        <input class="retro-input" type="text" placeholder="Your Name" />
+        <label style="font-size:11px;">Email:</label>
+        <input class="retro-input" type="email" placeholder="you@example.com" />
+        <label style="font-size:11px;">Message:</label>
+        <textarea class="retro-input" rows="3" placeholder="Say hello..."></textarea>
+        <button class="retro-btn" data-scramble>Send Message</button>
+      </div>
     </div>
   </div>
 
   <!-- ── Window: Social Hub ─────────────────────────────── -->
-  <div class="win" id="win-social" style="top:60px;left:380px;display:none;">
+  <!-- Tab order: LinkedIn → itch.io → GitHub -->
+  <div class="win" id="win-social" style="top:60px;left:380px;display:none;width:480px;height:560px;">
     <div class="title-bar" data-win="social">
       <span class="title-text">🌐 Connect / Social Feed</span>
       <div class="win-btn" onclick="minimizeWindow('social')">_</div>
+      <div class="win-btn" id="max-social" onclick="maximizeWindow('social')">□</div>
       <div class="win-btn" onclick="closeWindow('social')">✕</div>
     </div>
-
-    <!-- Tabs -->
     <div class="tab-bar" id="social-tabs">
-      <button class="tab-btn active" onclick="switchTab('gh')" data-scramble>GitHub</button>
-      <button class="tab-btn" onclick="switchTab('li')" data-scramble>LinkedIn</button>
-      <button class="tab-btn" onclick="switchTab('itch')" data-scramble>itch.io</button>
+      <button class="tab-btn active" onclick="switchTab('li')"   data-scramble>LinkedIn</button>
+      <button class="tab-btn"        onclick="switchTab('itch')" data-scramble>itch.io</button>
+      <button class="tab-btn"        onclick="switchTab('gh')"   data-scramble>GitHub</button>
     </div>
+    <div class="win-content">
 
-    <!-- GitHub panel -->
-    <div class="tab-panel active" id="tab-gh">
-      <div class="win-body" style="min-width:380px;">
+      <!-- ─ LinkedIn panel ─ -->
+      <div class="tab-panel active" id="tab-li">
         <div class="social-card">
-          <h3>🐙 parygust — GitHub</h3>
-          <p>Explore repositories, contributions, and open-source projects.</p>
-          <div class="stat-row">
-            <div class="stat"><div class="stat-num">—</div><div class="stat-lbl">Repos</div></div>
-            <div class="stat"><div class="stat-num">—</div><div class="stat-lbl">Followers</div></div>
-            <div class="stat"><div class="stat-num">—</div><div class="stat-lbl">Stars</div></div>
+          <div class="li-banner"></div>
+          <div class="li-avatar-wrap">
+            <div class="li-avatar">👤</div>
+            <div style="padding-top:30px;">
+              <div class="li-name">Enes Baş</div>
+              <div class="li-title">Creative Developer &amp; Designer</div>
+            </div>
           </div>
-          <a class="social-link" href="https://github.com/parygust" target="_blank" rel="noopener noreferrer" data-scramble>Open Profile ↗</a>
+          <div class="social-card-inner" style="padding-top:0;">
+            <a class="social-link"
+               href="https://www.linkedin.com/in/enes-ba%C5%9F-0955a7237/"
+               target="_blank" rel="noopener noreferrer" data-scramble>Open LinkedIn ↗</a>
+          </div>
         </div>
-        <!-- Contribution heatmap placeholder (live GitHub stats badge) -->
-        <div style="background:#fff;border:1px solid #868686;padding:10px;font-size:11px;color:#555;text-align:center;">
-          <img src="https://ghchart.rshah.org/parygust" alt="GitHub contribution chart"
-               style="max-width:100%;image-rendering:pixelated;" onerror="this.outerHTML='<p>Contribution chart — open profile to view live data.</p>'"/>
-        </div>
-      </div>
-    </div>
-
-    <!-- LinkedIn panel -->
-    <div class="tab-panel" id="tab-li">
-      <div class="win-body" style="min-width:380px;">
-        <div class="social-card">
-          <h3>💼 Enes Baş — LinkedIn</h3>
-          <p>Professional profile, experience, education, and endorsements.</p>
-          <p style="font-size:11px;color:#666;margin-top:4px;">
-            LinkedIn restricts embedding — click below to open the full profile.
+        <div class="li-section">
+          <h4>About</h4>
+          <p style="font-size:12px;color:#333;line-height:1.6;">
+            Creative developer at the crossroads of design and code. Passionate about immersive web experiences, motion graphics, and interactive storytelling.
           </p>
-          <br/>
-          <a class="social-link"
-             href="https://www.linkedin.com/in/enes-ba%C5%9F-0955a7237/"
-             target="_blank" rel="noopener noreferrer" data-scramble>Open LinkedIn ↗</a>
         </div>
-        <div style="background:#0077b5;padding:16px;color:#fff;font-size:12px;line-height:1.7;">
-          <strong style="font-size:14px;">Enes Baş</strong><br/>
-          Creative Developer &amp; Designer<br/>
-          <span style="opacity:.8;">Connect · Message · Follow</span>
+        <div class="li-section">
+          <h4>Experience</h4>
+          <div class="li-exp-item">
+            <div class="li-exp-icon">🏢</div>
+            <div>
+              <div class="li-exp-title">Creative Developer</div>
+              <div class="li-exp-sub">Freelance · 2022 – Present</div>
+            </div>
+          </div>
+          <div class="li-exp-item">
+            <div class="li-exp-icon">🎓</div>
+            <div>
+              <div class="li-exp-title">Computer Engineering</div>
+              <div class="li-exp-sub">University · 2020 – 2024</div>
+            </div>
+          </div>
+        </div>
+        <div class="li-section">
+          <h4>Skills</h4>
+          <div>
+            <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag">GSAP</span>
+            <span class="skill-tag">Three.js</span>
+            <span class="skill-tag">React</span>
+            <span class="skill-tag">Next.js</span>
+            <span class="skill-tag">WebGL</span>
+            <span class="skill-tag">UI Design</span>
+            <span class="skill-tag">Motion</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- itch.io panel -->
-    <div class="tab-panel" id="tab-itch">
-      <div class="win-body" style="min-width:380px;">
-        <div class="social-card">
-          <h3>🎮 parygust — itch.io</h3>
-          <p>Game jams, indie experiments, and interactive prototypes.</p>
-          <a class="social-link"
-             href="https://parygust.itch.io"
-             target="_blank" rel="noopener noreferrer" data-scramble>Open itch.io ↗</a>
-        </div>
-        <!-- itch.io profile embed (works for public profiles) -->
-        <div style="background:#fff;border:1px solid #868686;overflow:hidden;">
-          <iframe
-            src="https://itch.io/embed-upload/parygust"
-            allowfullscreen
-            style="width:100%;height:220px;border:none;display:block;"
-            title="itch.io profile">
-          </iframe>
+      <!-- ─ itch.io panel (gallery) ─ -->
+      <div class="tab-panel" id="tab-itch">
+        <div class="social-card" style="margin-bottom:0;border-bottom:none;">
+          <div class="itch-header">
+            <h3>🎮 parygust — itch.io</h3>
+            <p>Indie games, jam entries &amp; interactive experiments</p>
+          </div>
+          <div class="game-grid">
+
+            <div class="game-card" onclick="openLink('https://parygust.itch.io')">
+              <div class="game-thumb">🕹️</div>
+              <div class="game-info">
+                <div class="game-title" data-scramble>Jam Entry #1</div>
+                <div class="game-desc">A fast-paced puzzle platformer built in 72 hours.</div>
+                <div class="game-tags">
+                  <span class="game-tag jam">Game Jam</span>
+                  <span class="game-tag">Puzzle</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-card" onclick="openLink('https://parygust.itch.io')">
+              <div class="game-thumb">👾</div>
+              <div class="game-info">
+                <div class="game-title" data-scramble>Jam Entry #2</div>
+                <div class="game-desc">Retro-style shooter with procedural level generation.</div>
+                <div class="game-tags">
+                  <span class="game-tag jam">Game Jam</span>
+                  <span class="game-tag">Shooter</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-card" onclick="openLink('https://parygust.itch.io')">
+              <div class="game-thumb">🌌</div>
+              <div class="game-info">
+                <div class="game-title" data-scramble>Void Walker</div>
+                <div class="game-desc">Atmospheric exploration in a dark, generative universe.</div>
+                <div class="game-tags">
+                  <span class="game-tag">Exploration</span>
+                  <span class="game-tag">WebGL</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game-card" onclick="openLink('https://parygust.itch.io')">
+              <div class="game-thumb">🔮</div>
+              <div class="game-info">
+                <div class="game-title" data-scramble>Prototype X</div>
+                <div class="game-desc">Experimental narrative with dynamic branching choices.</div>
+                <div class="game-tags">
+                  <span class="game-tag">Narrative</span>
+                  <span class="game-tag">Prototype</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="itch-footer">
+            <p>Update cards with your real game titles &amp; links.</p>
+            <a class="social-link" style="background:#fa5c5c;color:#fff;border-color:#fa5c5c;"
+               href="https://parygust.itch.io" target="_blank" rel="noopener noreferrer" data-scramble>
+               View All ↗
+            </a>
+          </div>
         </div>
       </div>
-    </div>
+
+      <!-- ─ GitHub panel ─ -->
+      <div class="tab-panel" id="tab-gh">
+        <div class="social-card" style="margin-bottom:0;border-bottom:none;">
+          <div class="gh-header">
+            <div class="gh-avatar">🐙</div>
+            <div>
+              <div class="gh-name">parygust</div>
+              <div class="gh-sub">github.com/parygust</div>
+            </div>
+          </div>
+          <div class="gh-stats">
+            <div class="gh-stat"><div class="gh-stat-n" id="gh-repos">—</div><div class="gh-stat-l">Repos</div></div>
+            <div class="gh-stat"><div class="gh-stat-n" id="gh-followers">—</div><div class="gh-stat-l">Followers</div></div>
+            <div class="gh-stat"><div class="gh-stat-n" id="gh-following">—</div><div class="gh-stat-l">Following</div></div>
+          </div>
+          <div class="gh-chart-wrap">
+            <img id="gh-chart-img"
+                 src="https://ghchart.rshah.org/parygust"
+                 alt="GitHub contribution chart"
+                 style="max-width:100%;display:block;"
+                 onerror="this.style.display='none';document.getElementById('gh-chart-err').style.display='block';" />
+            <p id="gh-chart-err" class="gh-chart-fallback" style="display:none;">
+              Contribution chart — open profile to view live data.
+            </p>
+          </div>
+          <div class="gh-footer">
+            <a class="social-link" style="background:#21262d;color:#e6edf3;border-color:#30363d;"
+               href="https://github.com/parygust" target="_blank" rel="noopener noreferrer" data-scramble>
+               Open GitHub ↗
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /win-content -->
   </div>
 
-  <!-- ── Window: Resume (Adobe Acrobat 1.0 style) ───────── -->
-  <div class="win" id="win-resume" style="top:80px;left:420px;display:none;">
+  <!-- ── Window: Resume (Adobe Acrobat style) ───────────── -->
+  <div class="win" id="win-resume" style="top:60px;left:300px;width:800px;height:600px;display:none;">
     <div class="title-bar" data-win="resume">
-      <!-- Red title bar mimics Acrobat's classic brand color -->
       <span class="title-text">Adobe Acrobat Reader — Resume.pdf</span>
       <div class="win-btn" onclick="minimizeWindow('resume')">_</div>
+      <div class="win-btn" id="max-resume" onclick="maximizeWindow('resume')">□</div>
       <div class="win-btn" onclick="closeWindow('resume')">✕</div>
     </div>
     <div class="menu-bar">
@@ -555,31 +681,17 @@
       <span data-scramble>Tools</span>
       <span data-scramble>Help</span>
     </div>
-    <!-- Acrobat-style toolbar -->
     <div class="acrobat-toolbar">
       <button class="tb-btn" data-scramble>◀ Prev</button>
       <button class="tb-btn" data-scramble>Next ▶</button>
-      <span style="margin:0 6px;font-size:11px;">Page 1 of 1</span>
+      <span style="font-size:11px;margin:0 6px;">Page 1 of 1</span>
       <button class="tb-btn" data-scramble>Zoom −</button>
       <button class="tb-btn" data-scramble>Zoom +</button>
       <button class="tb-btn" onclick="window.open('resume.pdf','_blank')" data-scramble>⬇ Download</button>
     </div>
-    <!-- PDF viewport -->
-    <div class="pdf-viewport" style="width:580px;">
-      <embed src="resume.pdf" type="application/pdf" width="100%" height="100%"
-             onerror="this.outerHTML=document.getElementById('pdf-fallback-tpl').innerHTML" />
+    <div class="pdf-viewport" id="pdf-viewport">
+      <embed id="pdf-embed" src="resume.pdf" type="application/pdf" width="100%" height="100%" />
     </div>
-    <!-- Hidden fallback template -->
-    <template id="pdf-fallback-tpl">
-      <div class="pdf-placeholder">
-        <div class="pdf-icon">📄</div>
-        <p>Place <strong>resume.pdf</strong> in the same folder as index.html to preview here.</p>
-        <br/>
-        <a class="social-link" href="resume.pdf" download style="color:#fff;border-color:#fff;">
-          ⬇ Download Resume
-        </a>
-      </div>
-    </template>
   </div>
 
 </div><!-- /desktop -->
@@ -631,16 +743,13 @@
 ══════════════════════════════════════════════════════════════ -->
 <div id="taskbar">
   <button id="start-btn" onclick="toggleStartMenu()">⊞ Start</button>
-
   <div id="quick-launch">
     <div class="ql-icon" title="About"    onclick="openWindow('about')"    data-scramble>👤</div>
     <div class="ql-icon" title="Projects" onclick="openWindow('projects')" data-scramble>📁</div>
     <div class="ql-icon" title="Social"   onclick="openWindow('social')"   data-scramble>🌐</div>
     <div class="ql-icon" title="Resume"   onclick="openWindow('resume')"   data-scramble>📄</div>
   </div>
-
   <div class="tb-sep"></div>
-
   <div class="clock" id="clock">00:00</div>
 </div>
 
@@ -660,138 +769,259 @@ updateClock();
 setInterval(updateClock, 10000);
 
 /* ── Preloader ────────────────────────────────────────────── */
-(function initPreloader() {
+(function () {
   const el = $('counter');
-  let current = 0;
-  let resolved = false;
+  let current = 0, resolved = false;
 
   function animateTo(target, onDone) {
     gsap.to({ val: current }, {
       val: target,
       duration: (target - current) * 0.012,
       ease: 'power1.inOut',
-      onUpdate() {
-        current = Math.round(this.targets()[0].val);
-        el.textContent = String(current).padStart(2, '0');
-      },
+      onUpdate() { current = Math.round(this.targets()[0].val); el.textContent = String(current).padStart(2,'0'); },
       onComplete: onDone
     });
   }
 
   animateTo(70, () => {
     function finish() {
-      if (resolved) return;
-      resolved = true;
-      animateTo(100, exitPreloader);
+      if (resolved) return; resolved = true;
+      animateTo(100, () => {
+        gsap.to($('preloader'), { yPercent: -100, duration: 1.1, ease: 'expo.inOut',
+          onComplete: () => $('preloader').remove() });
+      });
     }
     if (document.readyState === 'complete') finish();
     else window.addEventListener('load', finish, { once: true });
   });
-
-  function exitPreloader() {
-    gsap.to($('preloader'), {
-      yPercent: -100,
-      duration: 1.1,
-      ease: 'expo.inOut',
-      onComplete: () => $('preloader').remove()
-    });
-  }
 })();
 
-/* ── Window Management ────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   WINDOW SYSTEM
+════════════════════════════════════════════════════════════ */
 let zCounter = 10;
+const winState = {};  // keyed by window id — stores maximize state
 
+/* ── Z-index / focus ──────────────────────────────────────── */
 function bringToFront(id) {
   document.querySelectorAll('.win').forEach(w => w.classList.remove('active'));
   const w = $('win-' + id);
   if (w) { w.style.zIndex = ++zCounter; w.classList.add('active'); }
 }
 
+/* ── Open / Close / Minimize ─────────────────────────────── */
 function openWindow(id) {
   const w = $('win-' + id);
   if (!w) return;
-  w.style.display = 'block';
+  w.style.display = 'flex'; // keep flex layout
   bringToFront(id);
-  gsap.fromTo(w,
-    { scale: 0.88, opacity: 0 },
-    { scale: 1, opacity: 1, duration: 0.22, ease: 'back.out(1.4)' }
-  );
+  gsap.fromTo(w, { scale: 0.88, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.22, ease: 'back.out(1.4)' });
 }
 
 function closeWindow(id) {
   const w = $('win-' + id);
   if (!w) return;
-  gsap.to(w, {
-    scale: 0.88, opacity: 0, duration: 0.16, ease: 'power2.in',
-    onComplete: () => { w.style.display = 'none'; }
-  });
+  // Exit maximized state cleanly before closing
+  if (winState[id]?.maximized) { winState[id].maximized = false; gsap.killTweensOf(w); }
+  gsap.to(w, { scale: 0.88, opacity: 0, duration: 0.16, ease: 'power2.in',
+    onComplete: () => { w.style.display = 'none'; gsap.set(w, { scale: 1, opacity: 1 }); } });
 }
 
 function minimizeWindow(id) {
   const w = $('win-' + id);
   if (!w) return;
-  gsap.to(w, {
-    y: 60, opacity: 0, duration: 0.18, ease: 'power2.in',
-    onComplete: () => { w.style.display = 'none'; gsap.set(w, { y: 0 }); }
-  });
+  gsap.to(w, { y: '+=60', opacity: 0, duration: 0.18, ease: 'power2.in',
+    onComplete: () => { w.style.display = 'none'; gsap.set(w, { y: 0, opacity: 1 }); } });
 }
 
-// Wire title bars
-document.querySelectorAll('.title-bar').forEach(tb => {
-  tb.addEventListener('mousedown', () => {
-    const id = tb.dataset.win;
-    if (id) bringToFront(id);
-  });
-});
+/* ── Maximize / Restore ───────────────────────────────────── */
+function maximizeWindow(id) {
+  const w = $('win-' + id);
+  if (!w) return;
+  const st = winState[id] || (winState[id] = { maximized: false });
+  const btn = $('max-' + id);
+  const TASKBAR_H = 64;
 
-// Initial window stack
+  if (!st.maximized) {
+    // ─── Save pre-maximize state ───────────────────────────
+    st.preTop    = w.style.top;
+    st.preLeft   = w.style.left;
+    st.preWidth  = w.style.width  || '';
+    st.preHeight = w.style.height || '';
+    st.preX      = parseFloat(w.getAttribute('data-x')) || 0;
+    st.preY      = parseFloat(w.getAttribute('data-y')) || 0;
+    st.maximized = true;
+    if (btn) btn.textContent = '❐';
+
+    // Clear drag transform so position is purely top/left
+    gsap.set(w, { x: 0, y: 0 });
+    w.setAttribute('data-x', 0);
+    w.setAttribute('data-y', 0);
+
+    gsap.to(w, {
+      top: 0, left: 0,
+      width: window.innerWidth,
+      height: window.innerHeight - TASKBAR_H,
+      duration: 0.32, ease: 'power3.inOut'
+    });
+
+  } else {
+    // ─── Restore ──────────────────────────────────────────
+    st.maximized = false;
+    if (btn) btn.textContent = '□';
+
+    gsap.to(w, {
+      top:    st.preTop  || 60,
+      left:   st.preLeft || 200,
+      width:  st.preWidth  || '',
+      height: st.preHeight || '',
+      duration: 0.28, ease: 'power3.inOut',
+      onComplete() {
+        // Restore the drag transform offset
+        gsap.set(w, { x: st.preX, y: st.preY });
+        w.setAttribute('data-x', st.preX);
+        w.setAttribute('data-y', st.preY);
+        // Remove GSAP's inline width/height if they were '' (auto)
+        if (!st.preWidth)  w.style.width  = '';
+        if (!st.preHeight) w.style.height = '';
+      }
+    });
+  }
+}
+
+/* ── interact.js: Drag + Resize on all .win ──────────────── */
+function initWindowInteract(el) {
+  const id = el.id.replace('win-', '');
+
+  interact(el)
+    /* ── Drag via title bar ────────────────────────────── */
+    .draggable({
+      allowFrom: '.title-bar',
+      listeners: {
+        start() { bringToFront(id); },
+        move(e) {
+          if (winState[id]?.maximized) return; // locked while maximized
+          const x = (parseFloat(el.getAttribute('data-x')) || 0) + e.dx;
+          const y = (parseFloat(el.getAttribute('data-y')) || 0) + e.dy;
+          gsap.set(el, { x, y });
+          el.setAttribute('data-x', x);
+          el.setAttribute('data-y', y);
+        }
+      }
+    })
+    /* ── Resize from all edges / corners ──────────────── */
+    .resizable({
+      edges: { left: true, right: true, bottom: true, top: true },
+      margin: 8,
+      listeners: {
+        move(e) {
+          if (winState[id]?.maximized) return; // locked while maximized
+          let x = parseFloat(el.getAttribute('data-x')) || 0;
+          let y = parseFloat(el.getAttribute('data-y')) || 0;
+          el.style.width  = e.rect.width  + 'px';
+          el.style.height = e.rect.height + 'px';
+          // Compensate position when dragging top or left edge
+          x += e.deltaRect.left;
+          y += e.deltaRect.top;
+          gsap.set(el, { x, y });
+          el.setAttribute('data-x', x);
+          el.setAttribute('data-y', y);
+        }
+      },
+      modifiers: [
+        interact.modifiers.restrictSize({ min: { width: 320, height: 180 } })
+      ]
+    });
+
+  /* ── Resize cursor feedback on hover ─────────────────── */
+  el.addEventListener('mousemove', e => {
+    if (winState[id]?.maximized) { el.style.cursor = 'default'; return; }
+    // Don't override cursor on title-bar (cursor:move) or buttons
+    if (e.target.closest('.title-bar') || e.target.classList.contains('win-btn')) return;
+
+    const r = el.getBoundingClientRect(), M = 8;
+    const atL = e.clientX - r.left  < M, atR = r.right  - e.clientX < M;
+    const atT = e.clientY - r.top   < M, atB = r.bottom - e.clientY < M;
+
+    if      ((atL && atT) || (atR && atB)) el.style.cursor = 'nwse-resize';
+    else if ((atR && atT) || (atL && atB)) el.style.cursor = 'nesw-resize';
+    else if (atL || atR)                   el.style.cursor = 'ew-resize';
+    else if (atT || atB)                   el.style.cursor = 'ns-resize';
+    else                                   el.style.cursor = 'default';
+  });
+  el.addEventListener('mouseleave', () => { el.style.cursor = 'default'; });
+
+  /* ── Bring to front on any mousedown ─────────────────── */
+  el.addEventListener('mousedown', () => bringToFront(id));
+}
+
+// Init all existing windows
+document.querySelectorAll('.win').forEach(initWindowInteract);
+
+// Initial focus stack
 ['about', 'projects', 'contact'].forEach(id => bringToFront(id));
 
-/* ── Draggable Windows ────────────────────────────────────── */
-interact('.win').draggable({
-  allowFrom: '.title-bar',
-  listeners: {
-    start(e) { bringToFront(e.target.id.replace('win-', '')); },
-    move(e) {
-      const t = e.target;
-      const x = (parseFloat(t.getAttribute('data-x')) || 0) + e.dx;
-      const y = (parseFloat(t.getAttribute('data-y')) || 0) + e.dy;
-      t.style.transform = `translate(${x}px,${y}px)`;
-      t.setAttribute('data-x', x);
-      t.setAttribute('data-y', y);
-    }
-  }
-});
+/* ── Resume PDF: handle embed errors ─────────────────────── */
+const pdfEmbed = $('pdf-embed');
+if (pdfEmbed) {
+  pdfEmbed.addEventListener('error', showPdfFallback);
+  // Also check after a short delay (some browsers fire load, not error, for missing embeds)
+  setTimeout(() => {
+    try {
+      if (pdfEmbed.contentDocument === null) showPdfFallback();
+    } catch (_) {}
+  }, 1500);
+}
 
-/* ── Text Scramble — Rafa Heras style (20ms/char, 300ms) ─── */
+function showPdfFallback() {
+  const vp = $('pdf-viewport');
+  if (!vp || vp.dataset.fallbackShown) return;
+  vp.dataset.fallbackShown = '1';
+  vp.innerHTML = `
+    <div class="pdf-placeholder">
+      <div class="pdf-icon">📄</div>
+      <p>Place <strong>resume.pdf</strong> in the same folder as index.html to preview inline.</p>
+      <a class="social-link" href="resume.pdf" download
+         style="margin-top:8px;color:#fff;border-color:#fff;">⬇ Download Resume</a>
+    </div>`;
+}
+
+/* ── GitHub: fetch live stats via API ─────────────────────── */
+fetch('https://api.github.com/users/parygust')
+  .then(r => r.json())
+  .then(d => {
+    if (d.public_repos !== undefined) $('gh-repos').textContent     = d.public_repos;
+    if (d.followers    !== undefined) $('gh-followers').textContent = d.followers;
+    if (d.following    !== undefined) $('gh-following').textContent = d.following;
+  })
+  .catch(() => {}); // silently ignore if offline
+
+/* ════════════════════════════════════════════════════════════
+   TEXT SCRAMBLE — 20 ms / frame, 300 ms total
+════════════════════════════════════════════════════════════ */
 const SYMBOLS = '@#$%*!?&^~≠∑π√§¶†‡';
 
 function scramble(el) {
   const original = el.dataset.original || el.textContent.trim();
   if (!el.dataset.original) el.dataset.original = original;
-
-  // Cancel any running animation on this element
   if (el._scrambleTimer) clearInterval(el._scrambleTimer);
 
-  const DURATION   = 300;  // ms total
-  const INTERVAL   = 20;   // ms per frame
-  const totalTicks = DURATION / INTERVAL; // 15 ticks
   let tick = 0;
+  const total = 15; // 300ms / 20ms
 
   el._scrambleTimer = setInterval(() => {
     tick++;
-    if (tick >= totalTicks) {
+    if (tick >= total) {
       clearInterval(el._scrambleTimer);
       el.textContent = original;
       return;
     }
-    const progress = tick / totalTicks;
+    const p = tick / total;
     el.textContent = original.split('').map((ch, i) => {
       if (ch === ' ') return ' ';
-      if (i / original.length < progress) return ch;
-      return SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+      return (i / original.length < p) ? ch : SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
     }).join('');
-  }, INTERVAL);
+  }, 20);
 }
 
 function bindScramble(root) {
@@ -803,92 +1033,86 @@ function bindScramble(root) {
 }
 bindScramble();
 
-/* ── Social Hub Tabs ──────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   SOCIAL HUB TABS
+════════════════════════════════════════════════════════════ */
 function switchTab(id) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#win-social .tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#win-social .tab-btn').forEach(b => b.classList.remove('active'));
   const panel = $('tab-' + id);
   if (panel) panel.classList.add('active');
-  // Activate the matching button by finding which one calls switchTab(id)
-  document.querySelectorAll('.tab-btn').forEach(b => {
+  document.querySelectorAll('#win-social .tab-btn').forEach(b => {
     if (b.getAttribute('onclick') === `switchTab('${id}')`) b.classList.add('active');
   });
+  bindScramble($('win-social')); // wire any new [data-scramble] in newly-active panel
 }
 
-/* ── Web Audio Click Sound ────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   WEB AUDIO CLICK SOUND
+════════════════════════════════════════════════════════════ */
 let audioCtx = null;
-
 function playClickSound() {
   try {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc  = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
+    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
     osc.type = 'square';
     osc.frequency.setValueAtTime(880, audioCtx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(220, audioCtx.currentTime + 0.12);
     gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
-    osc.start(audioCtx.currentTime);
-    osc.stop(audioCtx.currentTime + 0.16);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.16);
   } catch (_) {}
 }
 
-/* ── Link App Handler ─────────────────────────────────────── */
 function openLink(url) {
   playClickSound();
   setTimeout(() => window.open(url, '_blank', 'noopener,noreferrer'), 120);
 }
 
-/* ── Start Menu ───────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   START MENU
+════════════════════════════════════════════════════════════ */
 let startMenuOpen = false;
 
 function toggleStartMenu() {
   startMenuOpen = !startMenuOpen;
-  const menu = $('start-menu');
-  const btn  = $('start-btn');
+  const menu = $('start-menu'), btn = $('start-btn');
   if (startMenuOpen) {
     menu.style.display = 'block';
     btn.classList.add('active');
-    gsap.fromTo(menu,
-      { opacity: 0, y: 14 },
-      { opacity: 1, y: 0, duration: 0.18, ease: 'power2.out' }
-    );
+    gsap.fromTo(menu, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.18, ease: 'power2.out' });
     bindScramble(menu);
-  } else {
-    closeStartMenu();
-  }
+  } else { closeStartMenu(); }
 }
 
 function closeStartMenu() {
   if (!startMenuOpen && $('start-menu').style.display === 'none') return;
   startMenuOpen = false;
   $('start-btn').classList.remove('active');
-  gsap.to($('start-menu'), {
-    opacity: 0, y: 14, duration: 0.14, ease: 'power2.in',
-    onComplete: () => { $('start-menu').style.display = 'none'; }
-  });
+  gsap.to($('start-menu'), { opacity: 0, y: 14, duration: 0.14, ease: 'power2.in',
+    onComplete: () => { $('start-menu').style.display = 'none'; } });
 }
 
 document.addEventListener('mousedown', e => {
-  if (startMenuOpen &&
-      !$('start-menu').contains(e.target) &&
-      e.target.id !== 'start-btn' &&
-      !$('start-btn').contains(e.target)) {
+  if (startMenuOpen && !$('start-menu').contains(e.target) && !$('start-btn').contains(e.target))
     closeStartMenu();
-  }
 });
 
-/* ── Modular Window Factory ───────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   MODULAR WINDOW FACTORY
+   addWindow({ id, title, icon, label, content, top, left })
+════════════════════════════════════════════════════════════ */
 function addWindow({ id, title, icon = '🗂', label, content = '', top = 140, left = 300 }) {
+  // Desktop icon
   const iconEl = document.createElement('div');
   iconEl.className = 'icon';
-  iconEl.setAttribute('onclick', `openWindow('${id}')`);
+  iconEl.onclick = () => openWindow(id);
   iconEl.innerHTML = `<div class="icon-img">${icon}</div><span data-scramble>${label || title}</span>`;
   $('icons').appendChild(iconEl);
   bindScramble(iconEl);
 
+  // Window element
   const win = document.createElement('div');
   win.className = 'win';
   win.id = 'win-' + id;
@@ -897,28 +1121,15 @@ function addWindow({ id, title, icon = '🗂', label, content = '', top = 140, l
     <div class="title-bar" data-win="${id}">
       <span class="title-text">${title}</span>
       <div class="win-btn" onclick="minimizeWindow('${id}')">_</div>
+      <div class="win-btn" id="max-${id}" onclick="maximizeWindow('${id}')">□</div>
       <div class="win-btn" onclick="closeWindow('${id}')">✕</div>
     </div>
-    <div class="win-body" style="min-width:280px;">${content}</div>
+    <div class="win-content">
+      <div class="win-body" style="min-width:280px;">${content}</div>
+    </div>
   `;
   $('desktop').appendChild(win);
-
-  interact(win).draggable({
-    allowFrom: '.title-bar',
-    listeners: {
-      start(e) { bringToFront(e.target.id.replace('win-', '')); },
-      move(e) {
-        const t = e.target;
-        const x = (parseFloat(t.getAttribute('data-x')) || 0) + e.dx;
-        const y = (parseFloat(t.getAttribute('data-y')) || 0) + e.dy;
-        t.style.transform = `translate(${x}px,${y}px)`;
-        t.setAttribute('data-x', x);
-        t.setAttribute('data-y', y);
-      }
-    }
-  });
-
-  win.querySelector('.title-bar').addEventListener('mousedown', () => bringToFront(id));
+  initWindowInteract(win);
   bindScramble(win);
   openWindow(id);
 }
