@@ -257,25 +257,30 @@
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
+    /* Social Hub: fill full height, no grey gap */
+    #win-social .win-content { display: flex; flex-direction: column; }
+    #win-social .tab-panel.active { display: flex; flex-direction: column; flex: 1; }
+    #tab-li   { background: #fff; }
+    #tab-itch { background: #000; }
+    #tab-gh   { background: #0d1117; }
+
     /* ═══════════════════════════════════════════════════════
        SOCIAL HUB — LINKEDIN TAB
     ═══════════════════════════════════════════════════════ */
     .li-banner {
-      height: 72px;
-      background: linear-gradient(135deg, #003c5a 0%, #0077b5 55%, #00a0dc 100%);
+      height: 44px;
+      background: var(--silver);
+      border-bottom: 2px solid;
+      border-color: var(--mid) var(--white) var(--white) var(--mid);
+      box-shadow: inset 1px 1px 0 var(--white), inset -1px -1px 0 var(--mid);
       position: relative;
+      display: flex; align-items: center;
+      padding: 0 14px; gap: 8px;
     }
-    .li-banner-pattern {
-      position: absolute; inset: 0; opacity: .12;
-      background: repeating-linear-gradient(
-        45deg,
-        #fff 0px, #fff 1px,
-        transparent 1px, transparent 12px
-      );
-    }
+    .li-banner-pattern { display: none; }
     .li-avatar-row {
-      display: flex; align-items: flex-end; gap: 14px;
-      padding: 0 16px; margin-top: -38px; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 16px 0; margin-top: 0; margin-bottom: 10px;
     }
     .li-avatar {
       width: 76px; height: 76px; border-radius: 50%;
@@ -285,7 +290,7 @@
       box-shadow: 0 2px 6px rgba(0,0,0,.3);
       image-rendering: pixelated;
     }
-    .li-name-block { padding-top: 40px; }
+    .li-name-block { padding-top: 0; }
     .li-name { font-size: 18px; font-weight: bold; line-height: 1.1; }
     .li-headline { font-size: 11px; color: #333; line-height: 1.4; max-width: 280px; }
     .li-section { padding: 10px 16px; border-top: 1px solid #d0d0d0; }
@@ -318,7 +323,7 @@
     .itch-logo { font-size: 22px; }
     .itch-title { font-weight: bold; color: #fff; font-size: 14px; }
     .itch-sub   { color: #888; font-size: 11px; }
-    .game-list  { background: #111; padding: 10px 12px; display: flex; flex-direction: column; gap: 10px; }
+    .game-list  { background: #111; padding: 10px 12px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
 
     .game-card {
       display: flex; gap: 12px; align-items: flex-start;
@@ -427,6 +432,10 @@
       border-radius: 2px;
       image-rendering: pixelated;
     }
+    .gh-heatmap-fill {
+      background: #0d1117;
+      flex: 1;
+    }
     .gh-footer {
       background: #0d1117; padding: 10px 16px;
       border-top: 1px solid #21262d;
@@ -462,7 +471,17 @@
       background: #5a5a5a;
       display: flex; align-items: stretch;
     }
-    .pdf-area embed { width: 100%; height: 100%; border: none; display: block; }
+    #pdf-pages {
+      flex: 1; overflow-y: auto;
+      padding: 12px;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 8px;
+    }
+    #pdf-pages canvas {
+      display: block;
+      box-shadow: 0 2px 8px rgba(0,0,0,.55);
+      max-width: 100%;
+    }
     .pdf-placeholder {
       display: flex; flex-direction: column; align-items: center;
       justify-content: center; gap: 12px;
@@ -630,7 +649,7 @@
   <div id="icons">
 
     <div class="icon" tabindex="0" onclick="openWindow('about')">
-      <div class="icon-img">👤</div>
+      <div class="icon-img"><img src="me.png" style="width:128px;height:128px;object-fit:cover;border-radius:4px;image-rendering:auto;" /></div>
       <span class="icon-label" data-scramble>About.exe</span>
     </div>
 
@@ -676,7 +695,7 @@
   ════════════════════════════════════════════════════════ -->
   <div class="win" id="win-about" style="top:70px;left:200px;">
     <div class="title-bar" data-win="about">
-      <span class="title-icon">👤</span>
+      <img src="me.png" style="width:14px;height:14px;object-fit:cover;border-radius:2px;flex-shrink:0;" />
       <span class="title-text" data-scramble>About — enes baş</span>
       <div class="win-btn" onclick="minimizeWin('about')">_</div>
       <div class="win-btn" id="maxbtn-about" onclick="maximizeWin('about')">□</div>
@@ -690,12 +709,17 @@
     <div class="win-content">
       <div class="win-body" style="min-width:300px;">
         <p style="font-size:16px;font-weight:bold;margin-bottom:8px;">Hello, World. 👋</p>
-        <p>I'm <strong>enes baş</strong> — a <em>software engineering student</em> passionate about AI, Data Science and game development.</p>
+        <p>I'm <strong>enes baş</strong> — a <em>Software Engineering Student</em> at <strong>Medipol University</strong>, building intelligent systems and interactive experiences.</p>
         <br/>
-        <p>→ Full-stack &amp; creative web development</p>
-        <p>→ AI / Machine Learning enthusiast</p>
-        <p>→ Indie game developer (itch.io)</p>
-        <p>→ Motion design &amp; interactive 3-D</p>
+        <p style="font-weight:bold;margin-bottom:4px;">Programs &amp; Certifications</p>
+        <p>→ Active participant in the <strong>42 Türkiye</strong> coding program</p>
+        <p>→ Currently enrolled in <strong>Harvard CS50</strong> (Python &amp; SQL)</p>
+        <br/>
+        <p style="font-weight:bold;margin-bottom:4px;">Areas of Focus</p>
+        <p>→ AI Applications — Speech-to-Text &amp; TTS systems</p>
+        <p>→ Game Development — Godot 4.4, Unity, GDScript</p>
+        <p>→ Digital Illustration — Krita &amp; Blender</p>
+        <p>→ Indie game developer on itch.io</p>
         <br/>
         <p style="font-size:11px;color:#666;">System: Portfolio OS v2.0 — Windows Teal Edition<br/>All windows draggable &amp; resizable.</p>
       </div>
@@ -720,6 +744,21 @@
     <div class="win-content">
       <div class="win-body" style="min-width:300px;">
         <div class="proj-card">
+          <h3 data-scramble>AI Bank Assistant</h3>
+          <p>Intelligent banking chatbot with natural language understanding and account query capabilities.</p>
+          <span class="proj-tag">Python</span><span class="proj-tag">AI</span><span class="proj-tag">NLP</span>
+        </div>
+        <div class="proj-card">
+          <h3 data-scramble>VoiceAssistant</h3>
+          <p>Voice assistant powered by Gemma LLM with Whisper speech-to-text transcription pipeline.</p>
+          <span class="proj-tag">Python</span><span class="proj-tag">Gemma</span><span class="proj-tag">Whisper</span><span class="proj-tag">TTS</span>
+        </div>
+        <div class="proj-card">
+          <h3 data-scramble>ASL Language App</h3>
+          <p>American Sign Language recognition application using computer vision and machine learning.</p>
+          <span class="proj-tag">Python</span><span class="proj-tag">CV</span><span class="proj-tag">ML</span>
+        </div>
+        <div class="proj-card">
           <h3 data-scramble>socks_game</h3>
           <p>A browser-based game built with custom physics &amp; pixel art.</p>
           <span class="proj-tag">JavaScript</span><span class="proj-tag">Canvas</span>
@@ -727,11 +766,11 @@
         <div class="proj-card">
           <h3 data-scramble>Fall_lootgamejam</h3>
           <p>Game jam entry — loot-driven fall season themed platformer.</p>
-          <span class="proj-tag">Game Jam</span><span class="proj-tag">Unity</span>
+          <span class="proj-tag">Unity</span><span class="proj-tag">C#</span><span class="proj-tag">Game Jam</span>
         </div>
         <div class="proj-card">
           <h3 data-scramble>port</h3>
-          <p>This very portfolio — Windows 95 OS aesthetic, GSAP animations.</p>
+          <p>This portfolio — Windows 95 OS aesthetic with GSAP animations.</p>
           <span class="proj-tag">HTML</span><span class="proj-tag">GSAP</span><span class="proj-tag">CSS</span>
         </div>
       </div>
@@ -791,9 +830,12 @@
       <div class="tab-panel active" id="tab-li">
         <!-- Profile card -->
         <div style="background:#fff;border-bottom:1px solid #ddd;">
-          <div class="li-banner"><div class="li-banner-pattern"></div></div>
+          <div class="li-banner">
+            <span style="font-size:18px;">💼</span>
+            <span style="font-family:var(--font-ui);font-weight:bold;font-size:13px;color:#333;">LinkedIn Profile</span>
+          </div>
           <div class="li-avatar-row">
-            <div class="li-avatar">👤</div>
+            <div class="li-avatar"><img src="me.png" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" /></div>
             <div class="li-name-block">
               <div class="li-name">enes baş</div>
               <div class="li-headline">Software Engineering Student | AI, Data Science &amp; Game Developer</div>
@@ -815,14 +857,32 @@
         </div>
 
         <div class="li-section">
-          <div class="li-section-title">Experience &amp; Education</div>
+          <div class="li-section-title">Education</div>
           <div class="li-row">
             <div class="li-row-icon">🎓</div>
             <div class="li-row-body">
-              <div class="li-row-title">Software Engineering Student</div>
-              <div class="li-row-sub">University · 2021 – Present</div>
+              <div class="li-row-title">Software Engineering</div>
+              <div class="li-row-sub">Medipol University · 2021 – Present</div>
             </div>
           </div>
+          <div class="li-row">
+            <div class="li-row-icon">🏫</div>
+            <div class="li-row-body">
+              <div class="li-row-title">42 Türkiye Coding Program</div>
+              <div class="li-row-sub">Peer-to-peer engineering curriculum · Active</div>
+            </div>
+          </div>
+          <div class="li-row">
+            <div class="li-row-icon">🎯</div>
+            <div class="li-row-body">
+              <div class="li-row-title">Harvard CS50 — Python &amp; SQL</div>
+              <div class="li-row-sub">edX / Harvard · In Progress</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="li-section">
+          <div class="li-section-title">Experience</div>
           <div class="li-row">
             <div class="li-row-icon">🎮</div>
             <div class="li-row-body">
@@ -842,13 +902,15 @@
         <div class="li-section">
           <div class="li-section-title">Skills</div>
           <span class="skill-chip">Python</span>
-          <span class="skill-chip">JavaScript</span>
-          <span class="skill-chip">Machine Learning</span>
-          <span class="skill-chip">Data Science</span>
+          <span class="skill-chip">SQL</span>
+          <span class="skill-chip">AI Applications</span>
+          <span class="skill-chip">Speech-to-Text / TTS</span>
+          <span class="skill-chip">Godot 4.4</span>
+          <span class="skill-chip">GDScript</span>
           <span class="skill-chip">Unity</span>
-          <span class="skill-chip">GSAP</span>
-          <span class="skill-chip">Three.js</span>
-          <span class="skill-chip">React</span>
+          <span class="skill-chip">JavaScript</span>
+          <span class="skill-chip">Krita</span>
+          <span class="skill-chip">Blender</span>
         </div>
       </div><!-- /tab-li -->
 
@@ -967,7 +1029,7 @@
   <!-- ════════════════════════════════════════════════════
        WINDOW: Resume (Adobe Acrobat 1.0)
   ════════════════════════════════════════════════════════ -->
-  <div class="win" id="win-resume" style="top:60px;left:300px;width:800px;height:600px;display:none;">
+  <div class="win" id="win-resume" style="top:40px;left:280px;width:850px;height:1100px;display:none;">
     <div class="title-bar" data-win="resume">
       <span class="title-icon">📄</span>
       <span class="title-text" data-scramble>Adobe Acrobat Reader — Resume.pdf</span>
@@ -991,7 +1053,7 @@
       <button class="ac-btn" onclick="window.open('resume.pdf','_blank')" data-scramble>⬇ Download</button>
     </div>
     <div class="pdf-area" id="pdf-area">
-      <embed id="pdf-embed" src="resume.pdf" type="application/pdf" width="100%" height="100%" />
+      <div id="pdf-pages"></div>
     </div>
   </div>
 
@@ -1002,7 +1064,7 @@
 ══════════════════════════════════════════════════════════════ -->
 <div id="start-menu">
   <div class="sm-header">
-    <div class="sm-avatar">👤</div>
+    <div class="sm-avatar"><img src="me.png" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" /></div>
     <div>
       <div class="sm-user-name">enes baş</div>
       <div class="sm-user-sub">Portfolio OS v2.0</div>
@@ -1265,30 +1327,49 @@ document.querySelectorAll('.win').forEach(initWin);
 // Initial focus order
 ['about', 'projects'].forEach(id => bringFront(id));
 
-/* ── PDF fallback (if resume.pdf missing) ────────────────── */
-const pdfEmbed = $('pdf-embed');
-if (pdfEmbed) {
-  setTimeout(() => {
-    const area = $('pdf-area');
-    if (!area || area.dataset.ok) return;
-    try {
-      // If embed has no content (0 natural width), show fallback
-      if (pdfEmbed.offsetHeight < 10) showPdfFallback();
-    } catch (_) {}
-  }, 2000);
-  pdfEmbed.addEventListener('error', showPdfFallback);
-}
+/* ── PDF.js viewer (renders PDF to canvas — works from file:// too) ── */
+let pdfDoc = null, currentPage = 1, pdfScale = 1.5;
 
 function showPdfFallback() {
-  const a = $('pdf-area');
-  if (!a || a.dataset.ok) return;
-  a.innerHTML = `
+  const pages = $('pdf-pages');
+  if (!pages) return;
+  pages.innerHTML = `
     <div class="pdf-placeholder">
       <div class="big-icon">📄</div>
-      <p>Drop <strong>resume.pdf</strong> in the same folder as index.html to view it inline.</p>
+      <p>Place <strong>resume.pdf</strong> in the same folder as index.html.</p>
       <a class="dl-btn" href="resume.pdf" download>⬇ Download Resume</a>
     </div>`;
 }
+
+async function renderPdfPage(num) {
+  if (!pdfDoc) return;
+  const page = await pdfDoc.getPage(num);
+  const viewport = page.getViewport({ scale: pdfScale });
+  const canvas = document.createElement('canvas');
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+  $('pdf-pages').appendChild(canvas);
+  await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+}
+
+(function initPdfJs() {
+  const s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+  s.onload = async () => {
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    try {
+      pdfDoc = await pdfjsLib.getDocument('resume.pdf').promise;
+      const pages = $('pdf-pages');
+      pages.innerHTML = '';
+      for (let i = 1; i <= pdfDoc.numPages; i++) await renderPdfPage(i);
+      const lbl = document.querySelector('#win-resume .acrobat-bar span');
+      if (lbl) lbl.textContent = `Page 1 / ${pdfDoc.numPages}`;
+    } catch (_) { showPdfFallback(); }
+  };
+  s.onerror = showPdfFallback;
+  document.head.appendChild(s);
+})();
 
 /* ══════════════════════════════════════════════════════════
    GITHUB: live stats + heatmap
