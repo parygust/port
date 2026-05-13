@@ -71,6 +71,8 @@ body {
     repeating-linear-gradient(0deg,   transparent, transparent 39px, rgba(0,80,80,.35) 39px, rgba(0,80,80,.35) 40px),
     repeating-linear-gradient(90deg,  transparent, transparent 39px, rgba(0,80,80,.35) 39px, rgba(0,80,80,.35) 40px),
     var(--teal);
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -91,13 +93,11 @@ body {
   width: 152px; height: 172px;
   cursor: pointer; color: #fff;
   text-align: center;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
 }
-.icon:hover  { background: rgba(255,255,255,.12); }
-.icon:focus  { outline: 1px dotted #fff; }
-.icon:hover .icon-img {
-  outline: 1px dashed rgba(255,255,255,.9);
-  background: rgba(0,0,128,.4);
-}
+.icon:focus  { outline: none; }
 .icon-img {
   width: 128px; height: 128px;
   display: flex; align-items: center; justify-content: center;
@@ -615,3 +615,54 @@ body {
 .sm-item:hover { background: var(--navy); color: #fff; }
 .sm-icon { font-size: 18px; width: 22px; text-align: center; }
 .sm-divider { height: 1px; background: var(--mid); margin: 2px 0; box-shadow: 0 1px 0 var(--white); }
+
+/* ═══════════════════════════════════════════════════════
+   CRT MONITOR OVERLAY
+═══════════════════════════════════════════════════════ */
+#crt {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  pointer-events: none;
+  /* Scanlines */
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0, 0, 0, 0.13) 3px,
+    rgba(0, 0, 0, 0.13) 4px
+  );
+  animation: crt-flicker 0.12s infinite;
+}
+
+/* Vignette */
+#crt::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center,
+    transparent 55%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+}
+
+/* RGB fringe — very subtle chromatic shift on the horizontal axis */
+#crt::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 0,   0,   0.015) 0px,
+    rgba(0,   255, 0,   0.015) 1px,
+    rgba(0,   0,   255, 0.015) 2px,
+    transparent                3px
+  );
+  mix-blend-mode: screen;
+}
+
+@keyframes crt-flicker {
+  0%   { opacity: 1;    }
+  50%  { opacity: 0.97; }
+  100% { opacity: 1;    }
+}
