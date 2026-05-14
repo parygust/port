@@ -3,7 +3,7 @@
 define('DB_HOST', 'sql303.infinityfree.com');
 define('DB_NAME', 'if0_41913449_portfolio');
 define('DB_USER', 'if0_41913449');
-define('DB_PASS', 'your_password');
+define('DB_PASS', 'r25C9drlftp');
 
 function getDB() {
     static $pdo = null;
