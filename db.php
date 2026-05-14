@@ -1,5 +1,4 @@
 <?php
-// Database credentials — replace these with your InfinityFree values
 define('DB_HOST', 'sql303.infinityfree.com');
 define('DB_NAME', 'if0_41913449_portfolio');
 define('DB_USER', 'if0_41913449');

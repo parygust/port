@@ -2,20 +2,16 @@
 header('Content-Type: application/json');
 require_once 'db.php';
 
-// Only accept POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'error' => 'Invalid request method.']);
     exit;
 }
 
-// Read JSON body sent by fetch()
-$data = json_decode(file_get_contents('php://input'), true);
-
+$data    = json_decode(file_get_contents('php://input'), true);
 $name    = trim($data['name']    ?? '');
 $email   = trim($data['email']   ?? '');
 $message = trim($data['message'] ?? '');
 
-// Server-side validation (never trust only the client)
 if ($name === '' || $email === '' || $message === '') {
     echo json_encode(['success' => false, 'error' => 'All fields are required.']);
     exit;
@@ -25,18 +21,10 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     exit;
 }
 
-// Save to database
 try {
-    $pdo = getDB();
-    $stmt = $pdo->prepare(
-        'INSERT INTO contacts (name, email, message, sent_at)
-         VALUES (:name, :email, :message, NOW())'
-    );
-    $stmt->execute([
-        ':name'    => $name,
-        ':email'   => $email,
-        ':message' => $message
-    ]);
+    $pdo  = getDB();
+    $stmt = $pdo->prepare('INSERT INTO contacts (name, email, message, sent_at) VALUES (:name, :email, :message, NOW())');
+    $stmt->execute([':name' => $name, ':email' => $email, ':message' => $message]);
     echo json_encode(['success' => true]);
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'error' => 'Database error.']);

@@ -516,7 +516,7 @@ document.addEventListener('mousedown', e => {
    MODULAR WINDOW FACTORY
 ══════════════════════════════════════════════════════════ */
 /* ══════════════════════════════════════════════════════════
-   PROJECTS — load dynamically from projects.php
+   PROJECTS
 ══════════════════════════════════════════════════════════ */
 function renderProjects(projects) {
   const list = $('projects-list');
@@ -537,10 +537,10 @@ function renderProjects(projects) {
 fetch('projects.php')
   .then(r => r.json())
   .then(data => { if (Array.isArray(data)) renderProjects(data); })
-  .catch(() => {}); // silently keep the fallback content if server not ready
+  .catch(() => {});
 
 /* ══════════════════════════════════════════════════════════
-   CONTACT FORM — validation + AJAX submit
+   CONTACT FORM
 ══════════════════════════════════════════════════════════ */
 function sendContact() {
   const name    = $('contact-name');

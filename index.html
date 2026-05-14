@@ -5,32 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>enes baş — Portfolio OS</title>
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
 
-  <!-- Styles -->
   <link rel="stylesheet" href="style.css" />
 
-  <!-- Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════════════
-     PRELOADER
-══════════════════════════════════════════════════════════════ -->
 <div id="preloader">
-  <!-- Orbiting SVG text ring -->
   <svg id="orbit-svg" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <path id="orbit-path" />
     </defs>
-    <!-- outer group: rotates the whole ring -->
     <g id="orbit-spin">
-      <!-- inner group: pulses scale + opacity -->
       <g id="orbit-pulse">
         <text class="orbit-text">
           <textPath href="#orbit-path" startOffset="0%">
@@ -43,15 +34,10 @@
   <div id="counter">00</div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════
-     DESKTOP
-══════════════════════════════════════════════════════════════ -->
 <div id="desktop">
 
-  <!-- ── Icons ──────────────────────────────────────────── -->
   <div id="icons">
 
-    <!-- Left column: About, Social Hub, Resume -->
     <div class="icon" data-icon-id="about"    tabindex="0" onclick="openWindow('about')">
       <div class="icon-img"><img src="this_computer.png" /></div>
       <span class="icon-label" data-scramble>About.exe</span>
@@ -67,7 +53,6 @@
       <span class="icon-label" data-scramble>Resume.pdf</span>
     </div>
 
-    <!-- Middle column: Contact, Projects -->
     <div class="icon" data-icon-id="contact"  tabindex="0" onclick="openWindow('contact')">
       <div class="icon-img"><img src="mail.png" /></div>
       <span class="icon-label" data-scramble>Contact</span>
@@ -78,7 +63,6 @@
       <span class="icon-label" data-scramble>Projects</span>
     </div>
 
-    <!-- Right column: LinkedIn, itch.io, GitHub (positioned by JS at screen-right) -->
     <div class="icon" data-icon-id="linkedin" tabindex="0" onclick="openLink('https://www.linkedin.com/in/enes-ba%C5%9F-0955a7237/')">
       <div class="icon-img"><img src="briefcase.png" /></div>
       <span class="icon-label" data-scramble>LinkedIn</span>
@@ -94,11 +78,9 @@
       <span class="icon-label" data-scramble>GitHub</span>
     </div>
 
-  </div><!-- /icons -->
+  </div>
 
-  <!-- ════════════════════════════════════════════════════
-       WINDOW: About
-  ════════════════════════════════════════════════════════ -->
+  <!-- About -->
   <div class="win" id="win-about" style="top:70px;left:200px;">
     <div class="title-bar" data-win="about">
       <img src="me.png" style="width:14px;height:14px;object-fit:cover;border-radius:2px;flex-shrink:0;" />
@@ -136,9 +118,7 @@
     </div>
   </div>
 
-  <!-- ════════════════════════════════════════════════════
-       WINDOW: Projects
-  ════════════════════════════════════════════════════════ -->
+  <!-- Projects -->
   <div class="win" id="win-projects" style="top:110px;left:540px;">
     <div class="title-bar" data-win="projects">
       <span class="title-icon">📁</span>
@@ -160,9 +140,7 @@
     </div>
   </div>
 
-  <!-- ════════════════════════════════════════════════════
-       WINDOW: Contact
-  ════════════════════════════════════════════════════════ -->
+  <!-- Contact -->
   <div class="win" id="win-contact" style="top:190px;left:860px;display:none;">
     <div class="title-bar" data-win="contact">
       <span class="title-icon">✉️</span>
@@ -189,9 +167,7 @@
     </div>
   </div>
 
-  <!-- ════════════════════════════════════════════════════
-       WINDOW: Social Hub  (LinkedIn | itch.io | GitHub)
-  ════════════════════════════════════════════════════════ -->
+  <!-- Social Hub -->
   <div class="win" id="win-social" style="top:60px;left:350px;width:500px;height:580px;display:none;">
     <div class="title-bar" data-win="social">
       <span class="title-icon">🌐</span>
@@ -209,7 +185,6 @@
 
     <div class="win-content">
 
-      <!-- ── Tab: LinkedIn ─────────────────────────────── -->
       <div class="tab-panel active" id="tab-li">
         <div style="background:#fff;border-bottom:1px solid #ddd;">
           <div class="li-banner">
@@ -301,7 +276,6 @@
               <div class="li-row-sub">Treomind  · 2025 June – 2025 August</div>
             </div>
           </div>
-          
           <div class="li-row">
             <div class="li-row-icon">💻</div>
             <div class="li-row-body">
@@ -309,7 +283,6 @@
               <div class="li-row-sub">itch.io — parygust · 2022 – Present</div>
             </div>
           </div>
-          
         </div>
 
         <div class="li-section">
@@ -329,9 +302,8 @@
           <span class="skill-chip">Krita</span>
           <span class="skill-chip">Blender</span>
         </div>
-      </div><!-- /tab-li -->
+      </div>
 
-      <!-- ── Tab: itch.io ──────────────────────────────── -->
       <div class="tab-panel" id="tab-itch">
         <div class="itch-header">
           <div class="itch-logo">🎮</div>
@@ -381,9 +353,8 @@
             View All ↗
           </button>
         </div>
-      </div><!-- /tab-itch -->
+      </div>
 
-      <!-- ── Tab: GitHub ────────────────────────────────── -->
       <div class="tab-panel" id="tab-gh">
         <div class="gh-profile">
           <div class="gh-avatar">🐙</div>
@@ -428,14 +399,12 @@
             Open GitHub Profile ↗
           </button>
         </div>
-      </div><!-- /tab-gh -->
+      </div>
 
-    </div><!-- /win-content -->
-  </div><!-- /win-social -->
+    </div>
+  </div>
 
-  <!-- ════════════════════════════════════════════════════
-       WINDOW: Resume (Adobe Acrobat 1.0)
-  ════════════════════════════════════════════════════════ -->
+  <!-- Resume -->
   <div class="win" id="win-resume" style="top:40px;left:280px;width:850px;height:1100px;display:none;">
     <div class="title-bar" data-win="resume">
       <span class="title-icon">📄</span>
@@ -464,11 +433,8 @@
     </div>
   </div>
 
-</div><!-- /desktop -->
+</div>
 
-<!-- ══════════════════════════════════════════════════════════
-     START MENU
-══════════════════════════════════════════════════════════════ -->
 <div id="start-menu">
   <div class="sm-header">
     <div class="sm-avatar">
@@ -510,9 +476,6 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════
-     TASKBAR
-══════════════════════════════════════════════════════════════ -->
 <div id="taskbar">
   <button id="start-btn" onclick="toggleMenu()">
     <span style="font-size:20px;">⊞</span> Start
@@ -528,10 +491,8 @@
   <div id="clock">00:00:00</div>
 </div>
 
-<!-- CRT monitor overlay -->
 <div id="crt"></div>
 
-<!-- App script — loaded last so DOM is ready -->
 <script src="script.js"></script>
 </body>
 </html>
